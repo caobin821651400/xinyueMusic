@@ -9,7 +9,7 @@
         android:id="@+id/left_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
         android:src="@drawable/ic_menu" />
 
@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:background="@null"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
         android:src="@drawable/ic_menu_search" />
 
@@ -32,7 +32,7 @@
             android:id="@+id/tv_local_music"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="本地音乐"
+            android:text="我的音乐"
             android:textColor="@drawable/title_text_select"
             android:textSize="17sp" />
 

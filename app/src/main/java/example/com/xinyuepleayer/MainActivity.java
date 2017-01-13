@@ -4,16 +4,14 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import example.com.xinyuepleayer.adapter.MyViewPagerAdapter;
 import example.com.xinyuepleayer.base.BaseActivity;
-import example.com.xinyuepleayer.fragment.LocalFragment;
+import example.com.xinyuepleayer.fragment.MineFragment;
 import example.com.xinyuepleayer.fragment.OnLineFragment;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -48,7 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //viewpager适配
         MyViewPagerAdapter adapter = new MyViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new LocalFragment());
+        adapter.addFragment(new MineFragment());
         adapter.addFragment(new OnLineFragment());
         mViewPager.setAdapter(adapter);
         mViewPager.addOnPageChangeListener(new MyPageChangeListener());
