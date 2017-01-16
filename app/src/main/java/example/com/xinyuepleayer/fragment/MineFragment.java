@@ -15,11 +15,13 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
 import example.com.xinyuepleayer.R;
+import example.com.xinyuepleayer.activity.MusicPlayerActivity;
 import example.com.xinyuepleayer.adapter.MusicListAdapter;
 import example.com.xinyuepleayer.base.BaseFragment;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
@@ -55,9 +57,19 @@ public class MineFragment extends BaseFragment {
         initView(view);
     }
 
+
     private void initView(View v) {
         mListView = (ListView) v.findViewById(R.id.list_view);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+                launchActivity(MusicPlayerActivity.class, bundle);
+            }
+        });
     }
+
 
     /**
      * 延迟加载
