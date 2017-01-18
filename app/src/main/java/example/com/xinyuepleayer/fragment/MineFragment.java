@@ -25,6 +25,7 @@ import example.com.xinyuepleayer.activity.MusicPlayerActivity;
 import example.com.xinyuepleayer.adapter.MusicListAdapter;
 import example.com.xinyuepleayer.base.BaseFragment;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
+import example.com.xinyuepleayer.utils.MusicScanUtils;
 
 /**
  * Created by caobin on 2017/1/11.
@@ -63,8 +64,12 @@ public class MineFragment extends BaseFragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                MusicInfoBean bean = (MusicInfoBean) musicListAdapter.getItem(position);
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
+                bundle.putString("name", bean.getTitle());
+                bundle.putString("artist", bean.getArtist());
+                bundle.putString("imageUri", bean.getCoverUri());
                 launchActivity(MusicPlayerActivity.class, bundle);
             }
         });
@@ -90,43 +95,9 @@ public class MineFragment extends BaseFragment {
             @Override
             public void run() {
                 super.run();
-                musicInfoList = new ArrayList<>();
-                ContentResolver resolver = getContext().getContentResolver();
-                Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                String[] objects = {
-                        MediaStore.Audio.Media.DISPLAY_NAME,//名称
-                        MediaStore.Audio.Media.DURATION,//时长
-                        MediaStore.Audio.Media.SIZE,//大小
-                        MediaStore.Audio.Media.DATA,//数据的绝对地址
-                        MediaStore.Audio.Media.ARTIST,//艺术家，作者
-
-                };
-                Cursor cursor = resolver.query(uri, objects, null, null, null);
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        //对应数组取相应的值
-                        MusicInfoBean bean = new MusicInfoBean();
-
-                        String name = cursor.getString(0);
-                        bean.setName(name);
-
-                        long duration = cursor.getLong(1);
-                        bean.setDuration(duration);
-
-                        long size = cursor.getLong(2);
-                        bean.setSize(size);
-
-                        String data = cursor.getString(3);
-                        bean.setUrl(data);
-
-                        String artist = cursor.getString(4);
-                        bean.setArtist(artist);
-
-                        musicInfoList.add(bean);
-                    }
-                    //关闭
-                    cursor.close();
-                }
+                musicInfoList = new ArrayList<MusicInfoBean>();
+                //这里扫描歌曲,耗时操作放到子线程中
+                MusicScanUtils.scanMusic(getActivity(), musicInfoList);
                 //发送消息，更新UI
                 handler.sendEmptyMessage(1000);
             }
@@ -149,8 +120,9 @@ public class MineFragment extends BaseFragment {
 
                 //提示信息隐藏
             } else {
-                //没有
-                //提示信息显示
+                //没有, 提示信息显示
+                toast("本地没有歌曲!");
+
             }
             //取消加载进度条
         }

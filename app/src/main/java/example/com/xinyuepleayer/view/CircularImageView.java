@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
+ * 画圆图，用作头像
  * Created by caobin on 2016/12/14.
  */
 public class CircularImageView extends ImageView {

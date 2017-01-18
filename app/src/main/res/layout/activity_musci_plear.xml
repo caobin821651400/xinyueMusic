@@ -9,8 +9,8 @@
         android:id="@+id/iv_music_player_all_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/music_player_all_bg"
-        android:scaleType="fitXY" />
+        android:background="@color/gray"
+        android:scaleType="centerCrop" />
     <!--主要部分-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,18 +66,35 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="0.1dp"
+                android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@color/pale_white" />
+                android:background="@drawable/line1" />
         </RelativeLayout>
         <!--中间旋转部分-->
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:background="@color/red"></LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <example.com.xinyuepleayer.view.CircularImageView
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+                android:src="@drawable/play_disc" />
+
+            <example.com.xinyuepleayer.view.CircleImageView
+                android:id="@+id/rotate_circle_image_view"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:background="@color/transparent" />
+           <!-- <ImageView
+                android:id="@+id/rotate_circle_image_view"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center" />-->
+
+        </FrameLayout>
         <!--底部控制栏 -->
         <LinearLayout
             android:id="@+id/bottom_control"
@@ -136,39 +153,38 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/music_duration_played"
+                    android:id="@+id/tv_music_already_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
                     android:gravity="right"
                     android:singleLine="true"
                     android:text="00:00"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
 
-              <!--  <com.wm.remusic.widget.PlayerSeekBar
-                    android:id="@+id/play_seek"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                <SeekBar
+                    android:id="@+id/play_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="22"
-                    android:maxHeight="8dp"
-                    android:minHeight="8dp"
-                    android:progressDrawable="@drawable/play_seekbar"
-                    android:secondaryProgress="0"
-                    android:thumb="@drawable/play_plybar_btn" />-->
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:maxHeight="10dp"
+                    android:minHeight="10dp"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/seek_bar_progress_bg"
+                    android:thumb="@drawable/seek_bar_thumb_bg" />
 
                 <TextView
-                    android:id="@+id/music_duration"
+                    android:id="@+id/tv_music_all_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
                     android:singleLine="true"
                     android:text="00:00"
                     android:textColor="@color/white"
@@ -186,7 +202,7 @@
                     android:layout_height="3dp"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:src="@drawable/play_icn_loop"/>
+                    android:src="@drawable/play_icn_loop" />
 
                 <ImageView
                     android:id="@+id/playing_pre"
@@ -202,7 +218,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:src="@drawable/play_rdi_btn_play" />
+                    android:src="@drawable/play_rdi_btn_pause" />
 
                 <ImageView
                     android:id="@+id/playing_next"

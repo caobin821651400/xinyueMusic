@@ -1,21 +1,58 @@
 package example.com.xinyuepleayer.bean;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by caobin on 2017/1/12.
  */
 public class MusicInfoBean {
-    private String name;
+    // 歌曲类型 本地/网络
+    private Type type;
+    // [本地歌曲]歌曲id
+    private long id;
+    // 音乐标题
+    private String title;
+    // 艺术家
     private String artist;
+    // 专辑
+    private String album;
+    // 持续时间
     private long duration;
-    private long size;
-    private String url;
+    // 音乐路径
+    private String uri;
+    // [本地歌曲]专辑封面路径
+    private String coverUri;
+    // 文件名
+    private String fileName;
+    // [网络歌曲]专辑封面bitmap
+    private Bitmap cover;
+    // 文件大小
+    private long fileSize;
+    // 发行日期
+    private String year;
 
-    public String getName() {
-        return name;
+    public Type getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getArtist() {
@@ -26,6 +63,14 @@ public class MusicInfoBean {
         this.artist = artist;
     }
 
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
     public long getDuration() {
         return duration;
     }
@@ -34,19 +79,67 @@ public class MusicInfoBean {
         this.duration = duration;
     }
 
-    public long getSize() {
-        return size;
+    public String getUri() {
+        return uri;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
-    public String getUrl() {
-        return url;
+    public String getCoverUri() {
+        return coverUri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setCoverUri(String coverUri) {
+        this.coverUri = coverUri;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Bitmap getCover() {
+        return cover;
+    }
+
+    public void setCover(Bitmap cover) {
+        this.cover = cover;
+    }
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    /**
+     * 对比本地歌曲是否相同
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MusicInfoBean)) {
+            return false;
+        }
+        return this.getId() == ((MusicInfoBean) o).getId();
+    }
+
+    public enum Type {
+        LOCAL,
+        ONLINE
     }
 }

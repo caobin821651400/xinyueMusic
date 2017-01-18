@@ -1,4 +1,4 @@
-package example.com.xinyuepleayer;
+package example.com.xinyuepleayer.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import example.com.xinyuepleayer.R;
 import example.com.xinyuepleayer.adapter.MyViewPagerAdapter;
 import example.com.xinyuepleayer.base.BaseActivity;
 import example.com.xinyuepleayer.fragment.MineFragment;
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mViewPager.addOnPageChangeListener(new MyPageChangeListener());
 
         changeLocalText();
+        //默认第一个界面
         mViewPager.setCurrentItem(0);
     }
 
@@ -133,29 +135,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         localTv.setSelected(false);
         onLineTv.setTextSize(19);
         localTv.setTextSize(17);
-    }
-
-
-    private long waitTime = 2000;
-    private long touchTime = 0;
-
-    /**
-     * 再按一次退出程序
-     * 判断在一定的时间内连续点击两次才退出程序
-     */
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN && KeyEvent.KEYCODE_BACK == keyCode) {
-            long currentTime = System.currentTimeMillis();
-            if ((currentTime - touchTime) >= waitTime) {
-                toast("再按一次，退出程序!");
-                touchTime = currentTime;
-            } else {
-                finish();
-                System.exit(0);
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }

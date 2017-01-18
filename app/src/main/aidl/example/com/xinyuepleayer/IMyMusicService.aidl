@@ -73,4 +73,9 @@ interface IMyMusicService {
        */
        int getPlayerMode();
 
+        /**
+         * 判断歌曲是否正在播放
+        */
+       boolean isPlaying();
+
 }

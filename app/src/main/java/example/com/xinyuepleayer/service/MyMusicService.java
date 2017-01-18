@@ -1,14 +1,10 @@
 package example.com.xinyuepleayer.service;
 
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
@@ -17,6 +13,7 @@ import java.util.ArrayList;
 
 import example.com.xinyuepleayer.IMyMusicService;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
+import example.com.xinyuepleayer.utils.MusicScanUtils;
 
 
 /**
@@ -49,42 +46,8 @@ public class MyMusicService extends Service {
             public void run() {
                 super.run();
                 musicInfoList = new ArrayList<>();
-                ContentResolver resolver = getContentResolver();
-                Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                String[] objects = {
-                        MediaStore.Audio.Media.DISPLAY_NAME,//名称
-                        MediaStore.Audio.Media.DURATION,//时长
-                        MediaStore.Audio.Media.SIZE,//大小
-                        MediaStore.Audio.Media.DATA,//数据的绝对地址
-                        MediaStore.Audio.Media.ARTIST,//艺术家，作者
-
-                };
-                Cursor cursor = resolver.query(uri, objects, null, null, null);
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        //对应数组取相应的值
-                        MusicInfoBean bean = new MusicInfoBean();
-
-                        String name = cursor.getString(0);
-                        bean.setName(name);
-
-                        long duration = cursor.getLong(1);
-                        bean.setDuration(duration);
-
-                        long size = cursor.getLong(2);
-                        bean.setSize(size);
-
-                        String data = cursor.getString(3);
-                        bean.setUrl(data);
-
-                        String artist = cursor.getString(4);
-                        bean.setArtist(artist);
-
-                        musicInfoList.add(bean);
-                    }
-                    //关闭
-                    cursor.close();
-                }
+                //这里扫描歌曲,耗时操作放到子线程中
+                MusicScanUtils.scanMusic(getBaseContext(), musicInfoList);
             }
         }.start();
     }
@@ -156,6 +119,11 @@ public class MyMusicService extends Service {
         public int getPlayerMode() throws RemoteException {
             return service.getPlayerMode();
         }
+
+        @Override
+        public boolean isPlaying() throws RemoteException {
+            return service.isPlaying();
+        }
     };
 
     @Nullable
@@ -176,7 +144,7 @@ public class MyMusicService extends Service {
             //如果不为空释放在new
             if (mediaPlayer != null) {
                 mediaPlayer.release();
-               // mediaPlayer.reset();
+                // mediaPlayer.reset();
             }
 
             try {
@@ -188,7 +156,7 @@ public class MyMusicService extends Service {
                 //播放失败
                 mediaPlayer.setOnErrorListener(new MyOnErrorListener());
                 //拿到路径
-                mediaPlayer.setDataSource(musicInfo.getUrl());
+                mediaPlayer.setDataSource(musicInfo.getUri());
                 mediaPlayer.prepareAsync();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -225,6 +193,7 @@ public class MyMusicService extends Service {
      * 下一首
      */
     public void next() {
+        openAudio(position + 1);
     }
 
     /**
@@ -282,6 +251,13 @@ public class MyMusicService extends Service {
     }
 
     /**
+     * 判断是否正在播放
+     */
+    private boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+
+    /**
      * 准备完成
      */
     class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
@@ -311,6 +287,4 @@ public class MyMusicService extends Service {
             return true;
         }
     }
-
-
 }

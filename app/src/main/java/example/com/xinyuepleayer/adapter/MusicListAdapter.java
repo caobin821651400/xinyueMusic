@@ -30,7 +30,7 @@ public class MusicListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (mList==null){
+        if (mList == null) {
             return 0;
         }
         return mList.size();
@@ -53,16 +53,19 @@ public class MusicListAdapter extends BaseAdapter {
         if (containView == null) {
             view = mInflater.inflate(R.layout.item_music_list, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.textView = (TextView) view.findViewById(R.id.tv_music_name);
+            viewHolder.name = (TextView) view.findViewById(R.id.tv_music_name);
+            viewHolder.author = (TextView) view.findViewById(R.id.tv_music_author);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         MusicInfoBean bean = (MusicInfoBean) getItem(position);
-        viewHolder.textView.setText(bean.getName());
+        viewHolder.name.setText(bean.getTitle());
+        viewHolder.author.setText(bean.getArtist());
         return view;
     }
 
     class ViewHolder {
-        TextView textView;
+        TextView name;
+        TextView author;
     }
 }
