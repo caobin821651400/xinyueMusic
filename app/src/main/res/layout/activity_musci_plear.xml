@@ -27,7 +27,7 @@
                 android:id="@+id/ib_music_player_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/btn_actionbar_back" />
 
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@null"
                 android:padding="10dp"
                 android:src="@drawable/btn_share_bg" />
 
@@ -88,11 +88,11 @@
                 android:layout_height="180dp"
                 android:layout_gravity="center"
                 android:background="@color/transparent" />
-           <!-- <ImageView
-                android:id="@+id/rotate_circle_image_view"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_gravity="center" />-->
+            <!-- <ImageView
+                 android:id="@+id/rotate_circle_image_view"
+                 android:layout_width="180dp"
+                 android:layout_height="180dp"
+                 android:layout_gravity="center" />-->
 
         </FrameLayout>
         <!--底部控制栏 -->
@@ -168,8 +168,7 @@
                     android:textSize="10sp" />
 
                 <SeekBar
-                    android:id="@+id/play_progress"
-                    style="?android:attr/progressBarStyleHorizontal"
+                    android:id="@+id/seek_bar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

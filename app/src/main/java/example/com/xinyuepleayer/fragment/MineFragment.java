@@ -64,12 +64,8 @@ public class MineFragment extends BaseFragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                MusicInfoBean bean = (MusicInfoBean) musicListAdapter.getItem(position);
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
-                bundle.putString("name", bean.getTitle());
-                bundle.putString("artist", bean.getArtist());
-                bundle.putString("imageUri", bean.getCoverUri());
                 launchActivity(MusicPlayerActivity.class, bundle);
             }
         });

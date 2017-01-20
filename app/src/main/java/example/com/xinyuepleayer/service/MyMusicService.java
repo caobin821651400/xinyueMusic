@@ -21,6 +21,7 @@ import example.com.xinyuepleayer.utils.MusicScanUtils;
  * Created by caobin on 2017/1/16.
  */
 public class MyMusicService extends Service {
+    public static final String COM_CAOBIN_NOTIFY_CHANGE_MUSIC_INFO = "com.caobin.notify.change.music.info";
     //歌曲信息封装类对象
     private MusicInfoBean musicInfo;
     // 存放歌曲的集合
@@ -124,6 +125,16 @@ public class MyMusicService extends Service {
         public boolean isPlaying() throws RemoteException {
             return service.isPlaying();
         }
+
+        @Override
+        public void goToSeek(int progress) throws RemoteException {
+            service.goToSeek(progress);
+        }
+
+        @Override
+        public String getImageUri() throws RemoteException {
+            return service.getImageUri();
+        }
     };
 
     @Nullable
@@ -143,8 +154,8 @@ public class MyMusicService extends Service {
             musicInfo = musicInfoList.get(position);
             //如果不为空释放在new
             if (mediaPlayer != null) {
-                mediaPlayer.release();
-                // mediaPlayer.reset();
+//                mediaPlayer.release();
+                mediaPlayer.reset();
             }
 
             try {
@@ -193,48 +204,67 @@ public class MyMusicService extends Service {
      * 下一首
      */
     public void next() {
-        openAudio(position + 1);
+        position++;
+        //下一首
+        if (musicInfoList != null) {
+            openAudio(position % (musicInfoList.size()));
+        }
     }
 
     /**
      * 上一首
      */
     public void pre() {
+        if (position == 0) {
+            Toast.makeText(MyMusicService.this, "已经到头了!", Toast.LENGTH_SHORT).show();
+        } else if (position > 0) {
+            position = position - 1;
+            openAudio(position);
+        } else {
+
+        }
     }
 
     /**
      * 得到当前进度
      */
     public int getCurrentProgress() {
-        return 0;
+        return mediaPlayer.getCurrentPosition();
     }
 
     /**
-     * 得到歌曲时长
+     * 得到歌曲总时长
      */
     public int getDuration() {
-        return 0;
+        return mediaPlayer.getDuration();
     }
 
     /**
      * 得到歌曲名称
      */
     public String getName() {
-        return "";
+        return musicInfo.getTitle();
     }
 
     /**
      * 得到演唱者
      */
     public String getArtist() {
-        return "";
+        return musicInfo.getArtist();
+    }
+
+    /**
+     * 得到封面的uri
+     */
+    public String getImageUri() {
+        return musicInfo.getCoverUri();
     }
 
     /**
      * 得到歌曲路径
      */
     public String getMusicPath() {
-        return "";
+        return musicInfo.getUri();
     }
 
     /**
@@ -258,13 +288,32 @@ public class MyMusicService extends Service {
     }
 
     /**
+     * 改变歌曲播放进度
+     */
+    private void goToSeek(int progress) {
+        mediaPlayer.seekTo(progress);
+    }
+
+    /**
      * 准备完成
      */
     class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
+            //通知activity改变音乐信息
+            notifyChange(COM_CAOBIN_NOTIFY_CHANGE_MUSIC_INFO);
             start();
         }
+    }
+
+    /**
+     * 准备完成 发送广播通知activity改变音乐信息
+     *
+     * @param action
+     */
+    private void notifyChange(String action) {
+        Intent intent = new Intent(action);
+        sendBroadcast(intent);
     }
 
     /**

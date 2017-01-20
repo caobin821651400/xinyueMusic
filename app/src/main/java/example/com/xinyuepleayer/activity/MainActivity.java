@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import example.com.xinyuepleayer.R;
@@ -20,6 +20,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView localTv, onLineTv;
     private ViewPager mViewPager;
     private DrawerLayout mDrawerLayout;
+    private RelativeLayout playingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +36,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         onLineTv = (TextView) findViewById(R.id.tv_on_line_music);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        playingLayout = (RelativeLayout) findViewById(R.id.rl_music_name_and_author);
+
         findViewById(R.id.ll_menu_1).setOnClickListener(this);
         findViewById(R.id.ll_menu_2).setOnClickListener(this);
         findViewById(R.id.ll_menu_3).setOnClickListener(this);
         findViewById(R.id.ll_menu_4).setOnClickListener(this);
+        findViewById(R.id.rl_music_name_and_author).setOnClickListener(this);
 
         localTv.setOnClickListener(this);
         onLineTv.setOnClickListener(this);
@@ -89,6 +93,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ll_menu_4:
                 mDrawerLayout.closeDrawers();
                 toast("4");
+                break;
+            case R.id.rl_music_name_and_author:
+                launchActivity(MusicPlayerActivity.class, null);
                 break;
         }
     }

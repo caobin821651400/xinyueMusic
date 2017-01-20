@@ -78,4 +78,15 @@ interface IMyMusicService {
         */
        boolean isPlaying();
 
+       /**
+        *改变歌曲播放进度
+       */
+       void goToSeek(int progress);
+
+        /**
+          * 得到封面的uri
+         */
+       String getImageUri();
+
+
 }
