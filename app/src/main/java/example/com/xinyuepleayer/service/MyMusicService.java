@@ -13,7 +13,9 @@ import java.util.ArrayList;
 
 import example.com.xinyuepleayer.IMyMusicService;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
+import example.com.xinyuepleayer.utils.Constant;
 import example.com.xinyuepleayer.utils.MusicScanUtils;
+import example.com.xinyuepleayer.utils.MyUtils;
 
 
 /**
@@ -28,8 +30,12 @@ public class MyMusicService extends Service {
     private ArrayList<MusicInfoBean> musicInfoList;
     //歌曲的位置
     private int position;
+    //正在播放的歌曲位置
+    private int currentPosition;
     //播放器
     private MediaPlayer mediaPlayer;
+    //是否为暂停状态
+    private boolean isPause = false;
 
     @Override
     public void onCreate() {
@@ -57,8 +63,9 @@ public class MyMusicService extends Service {
         MyMusicService service = MyMusicService.this;
 
         @Override
-        public void openAudio(int position) throws RemoteException {
+        public int openAudio(int position) throws RemoteException {
             service.openAudio(position);
+            return position;
         }
 
         @Override
@@ -140,6 +147,11 @@ public class MyMusicService extends Service {
         public int getPosition() throws RemoteException {
             return service.getPosition();
         }
+
+        @Override
+        public boolean isPause() throws RemoteException {
+            return service.isPause();
+        }
     };
 
     @Nullable
@@ -153,7 +165,7 @@ public class MyMusicService extends Service {
      *
      * @param position 位置
      */
-    private void openAudio(int position) {
+    private int openAudio(int position) {
         this.position = position;
         if (musicInfoList != null && musicInfoList.size() > 0) {
             musicInfo = musicInfoList.get(position);
@@ -180,13 +192,16 @@ public class MyMusicService extends Service {
         } else {
             Toast.makeText(this, "没有音乐", Toast.LENGTH_SHORT).show();
         }
+        currentPosition = position;
+        MyUtils.saveCurrentMusicPosition(this, Constant.SAVE_CURRENT_MUSIC_POSITION, currentPosition);
+        return currentPosition;
     }
 
     /**
-     *
+     * 得到当前歌曲的位置
      */
     public int getPosition() {
-        return position;
+        return currentPosition;
     }
 
     /**
@@ -194,6 +209,7 @@ public class MyMusicService extends Service {
      */
     public void start() {
         mediaPlayer.start();
+        isPause = false;
     }
 
     /**
@@ -201,6 +217,7 @@ public class MyMusicService extends Service {
      */
     public void pause() {
         mediaPlayer.pause();
+        isPause = true;
     }
 
     /**
@@ -302,6 +319,15 @@ public class MyMusicService extends Service {
     }
 
     /**
+     * 判断是否为暂停状态
+     *
+     * @return
+     */
+    public boolean isPause() {
+        return isPause;
+    }
+
+    /**
      * 改变歌曲播放进度
      */
     private void goToSeek(int progress) {
@@ -349,5 +375,12 @@ public class MyMusicService extends Service {
             next();
             return true;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //释放资源
+        mediaPlayer.release();
     }
 }

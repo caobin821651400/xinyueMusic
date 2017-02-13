@@ -32,9 +32,11 @@ import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.fragment.MineFragment;
 import example.com.xinyuepleayer.fragment.OnLineFragment;
 import example.com.xinyuepleayer.service.MyMusicService;
+import example.com.xinyuepleayer.utils.Constant;
 import example.com.xinyuepleayer.utils.MyLogUtil;
+import example.com.xinyuepleayer.utils.MyUtils;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     //左侧打开侧滑按钮；搜索按钮；暂停播放按钮
     private ImageButton leftBtn, searchBtn, playerBtn;
@@ -58,7 +60,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         initView();
         initData();
         bindServiceAndStart();
-        initListener();
     }
 
     @Override
@@ -131,6 +132,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
+        // Bundle bundle = null;
         switch (view.getId()) {
             case R.id.tv_local_music:
                 changeLocalText();
@@ -163,7 +165,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 toast("4");
                 break;
             case R.id.rl_music_name_and_author:
-                //launchActivity(MusicPlayerActivity.class, null);
+                launchActivity(MusicPlayerActivity.class, null);
+               // overridePendingTransition(R.anim.move_in_anim, R.anim.move_out_anim);
                 break;
             case R.id.btn_next_music:
                 //下一首
@@ -197,35 +200,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
-    /**
-     * 各种监听事件
-     */
-    private void initListener() {
-        //进度条监听
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                if (b) {
-                    try {
-                        service.goToSeek(progress);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-    }
-
 
     /**
      * viewpager滑动监听
@@ -239,8 +213,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
+                searchBtn.setVisibility(View.INVISIBLE);
                 changeLocalText();
             } else if (position == 1) {
+                searchBtn.setVisibility(View.VISIBLE);
                 changeLineText();
             }
         }
@@ -258,7 +234,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         localTv.setSelected(true);
         onLineTv.setSelected(false);
         localTv.setTextSize(19);
-        onLineTv.setTextSize(17);
+        onLineTv.setTextSize(15);
     }
 
     /**
@@ -268,7 +244,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         onLineTv.setSelected(true);
         localTv.setSelected(false);
         onLineTv.setTextSize(19);
-        localTv.setTextSize(17);
+        localTv.setTextSize(15);
     }
 
 
@@ -297,9 +273,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             service = IMyMusicService.Stub.asInterface(iBinder);
             try {
-                if (service.isPlaying()) {
-                    //目的为了在退出程序时，server在播放，在此进来时显示正在播放的歌曲信息
+                //两种情况 1.第一次进入程序没有播放  2.暂停退出  3.正在播放时推出。只有第一种情况service为空
+                if (service.isPlaying() || service.isPause()) {
+                    //目的为了在退出程序时，service不为空，在次进来时显示正在播放的歌曲信息
                     showMusicInfo(service);
+                } else {
+
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();

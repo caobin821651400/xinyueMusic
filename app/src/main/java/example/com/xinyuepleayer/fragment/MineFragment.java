@@ -70,7 +70,16 @@ public class MineFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 try {
-                    getPlayService().openAudio(position);
+                    //如果正在播放，点击正在播放的歌曲没反应，点击其他可以。
+                    if (getPlayService().isPlaying()) {
+                        if (position == getPlayService().getPosition()) {
+                            return;
+                        } else {
+                            getPlayService().openAudio(position);
+                        }
+                    } else {
+                        getPlayService().openAudio(position);
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

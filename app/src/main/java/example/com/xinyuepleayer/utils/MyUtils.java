@@ -1,12 +1,15 @@
 package example.com.xinyuepleayer.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.TrafficStats;
+import android.provider.SyncStateContract;
 
 import java.util.Formatter;
 import java.util.Locale;
 
 /**
+ * 工具类
  * Created by caobin on 2017/1/18.
  */
 public class MyUtils {
@@ -24,7 +27,34 @@ public class MyUtils {
     }
 
     /**
-     * 把毫秒转换成：1:20:30这里形式
+     * 保存正在播放的歌曲位置
+     *
+     * @param context
+     * @param key
+     * @param value
+     */
+    public static void saveCurrentMusicPosition(Context context, final String key, int value) {
+        SharedPreferences sp = context.getSharedPreferences(Constant.SAVE_CURRENT_MUSIC_POSITION,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+
+    /**
+     * 得到正在播放的歌曲位置
+     *
+     * @param context
+     * @param key
+     */
+    public static int getCurrentMusicPosition(Context context, final String key) {
+        SharedPreferences sp = context.getSharedPreferences(Constant.SAVE_CURRENT_MUSIC_POSITION,
+                Context.MODE_PRIVATE);
+        return sp.getInt(key, 0);
+    }
+
+    /**
+     * 把毫秒转换成：1:20:30这种形式
      *
      * @param timeMs
      * @return

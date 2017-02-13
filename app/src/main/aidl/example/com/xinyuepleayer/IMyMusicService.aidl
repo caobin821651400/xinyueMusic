@@ -11,7 +11,7 @@ interface IMyMusicService {
        *
        * @param position 位置
        */
-      void openAudio(int position);
+      int openAudio(int position);
 
       /**
        * 播放音乐
@@ -87,8 +87,14 @@ interface IMyMusicService {
           * 得到封面的uri
          */
        String getImageUri();
-
+         /**
+          * 得到正在播放歌曲的位置
+           */
        int getPosition();
+        /**
+        * 判断是否为暂停状态
+       */
+       boolean isPause();
 
 
 

@@ -11,5 +11,8 @@ public class Constant {
     public static final String NEWS_API_URL="http://v.juhe.cn/toutiao/index";
    /**NBA数据API**/
    public static final String NBA_API_URL="http://op.juhe.cn/onebox/basketball/nba";
+   /**保存正在播放音乐的位置**/
+   public static final String SAVE_CURRENT_MUSIC_POSITION = "save_current_music_position";
+
 
 }

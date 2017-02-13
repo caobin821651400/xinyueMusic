@@ -55,6 +55,7 @@ public class MusicListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) view.findViewById(R.id.tv_music_name);
             viewHolder.author = (TextView) view.findViewById(R.id.tv_music_author);
+            viewHolder.isPlayingImg = (TextView) view.findViewById(R.id.tv_music_list_head);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
@@ -67,5 +68,6 @@ public class MusicListAdapter extends BaseAdapter {
     class ViewHolder {
         TextView name;
         TextView author;
+        TextView isPlayingImg;
     }
 }
