@@ -88,5 +88,8 @@ interface IMyMusicService {
          */
        String getImageUri();
 
+       int getPosition();
+
+
 
 }

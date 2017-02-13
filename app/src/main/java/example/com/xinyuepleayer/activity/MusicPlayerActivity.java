@@ -31,12 +31,6 @@ import example.com.xinyuepleayer.view.CircleImageView;
 import example.com.xinyuepleayer.view.CircleTransform;
 
 public class MusicPlayerActivity extends BaseActivity implements View.OnClickListener {
-    /**
-     * 歌曲在列表中的位置
-     */
-    private int position;
-    //封面URI
-    // private String imageUri;
     //播放界面背景
     private ImageView allBg;
     //各种按钮
@@ -45,8 +39,6 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     private IMyMusicService service;
     //带旋转的imageview
     private CircleImageView rotateImage;
-    //广播
-    private MyReceiver myReceiver;
     //进度条
     private SeekBar mSeekBar;
     //当前播放的时间
@@ -58,26 +50,10 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_musci_plear);
-        //拿到列表中歌曲的位置
-        if (getIntent() != null) {
-            position = getIntent().getIntExtra("position", 0);
-        }
         initView();
-        initData();
-        bindServiceAndStart();
         initListener();
     }
 
-    /**
-     * 初始化歌曲的信息
-     */
-    private void initData() {
-        utils = new MyUtils();
-        myReceiver = new MyReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MyMusicService.COM_CAOBIN_NOTIFY_CHANGE_MUSIC_INFO);
-        registerReceiver(myReceiver, filter);
-    }
 
     private void initView() {
         rotateImage = (CircleImageView) findViewById(R.id.rotate_circle_image_view);
@@ -97,7 +73,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 监听事件
+     * 各种监听事件
      */
     private void initListener() {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -125,15 +101,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     }
 
 
-    /**
-     * 绑定服务并启动
-     */
-    private void bindServiceAndStart() {
-        Intent intent = new Intent(this, MyMusicService.class);
-        intent.setAction("com.caobin.musicplayer.aidlService");
-        bindService(intent, con, Context.BIND_AUTO_CREATE);
-        startService(intent);
-    }
+
 
     /**
      * 点击事件处理
@@ -194,47 +162,6 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 接受广播
-     */
-    class MyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //接收到广播，显示歌曲信息
-            //歌曲名和作者
-            try {
-                ((TextView) findViewById(R.id.tv_music_name)).setText(service.getName());
-                ((TextView) findViewById(R.id.tv_music_author)).setText(service.getArtist());
-                ((TextView) findViewById(R.id.tv_music_all_time)).setText(utils.stringForTime(service.getDuration()));
-
-                //加载专辑封面
-                Glide.with(MusicPlayerActivity.this).load(service.getImageUri()).centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .transform(new CircleTransform(MusicPlayerActivity.this))
-                        .error(R.drawable.no_music_rotate_img)
-                        .crossFade()
-                        .into(rotateImage);
-                //加载背景，也是加载专辑封面
-                Glide.with(MusicPlayerActivity.this)
-                        .load(service.getImageUri())
-                        .error(R.drawable.no_music_rotate_img)
-                        .into(allBg);
-                //透明度
-                allBg.setImageAlpha(20);
-                //添加切换的渐变动画
-                ObjectAnimator mObObjectAnimator = new ObjectAnimator();
-                mObObjectAnimator.ofFloat(allBg, "Alpha", 0.0F, 1.0F).setDuration(1000).start();
-                mObObjectAnimator.cancel();
-
-
-                mSeekBar.setMax(service.getDuration());
-                mSeekBar.postDelayed(mRunnable, 10);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
      * 进度条更新线程
      */
     private Runnable mRunnable = new Runnable() {
@@ -259,57 +186,21 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     };
 
 
-    /**
-     * 监听连接状态
-     */
-    private ServiceConnection con = new ServiceConnection() {
-        /**
-         * 链接成功回调
-         * @param componentName
-         * @param iBinder
-         */
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            service = IMyMusicService.Stub.asInterface(iBinder);
-            if (service != null) {
-                try {
-                    service.openAudio(position);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
-        /**
-         * 链接失败回调
-         * @param componentName
-         */
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            if (service != null) {
-                try {
-                    service.stop();
-                    service = null;
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //退出时解除绑定
-        unbindService(con);
-        //注销广播
-        if (myReceiver != null) {
-            unregisterReceiver(myReceiver);
-            myReceiver = null;
-        }
-        //停止线程
-        mSeekBar.removeCallbacks(mRunnable);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        //退出时解除绑定
+//        unbindService(con);
+//        //注销广播
+//        if (myReceiver != null) {
+//            unregisterReceiver(myReceiver);
+//            myReceiver = null;
+//        }
+//        //停止线程
+//        mSeekBar.removeCallbacks(mRunnable);
+//    }
 
     @Override
     public void onBackPressed() {

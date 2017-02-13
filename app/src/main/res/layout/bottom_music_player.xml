@@ -20,7 +20,7 @@
             android:layout_margin="5dp"
             android:background="@null"
             android:scaleType="fitXY"
-            android:src="@mipmap/app_logo" />
+            android:src="@drawable/no_music_rotate_img" />
 
         <RelativeLayout
             android:id="@+id/rl_music_name_and_author"
@@ -34,7 +34,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
-                android:text="123456789"
+                android:lines="1"
+                android:singleLine="true"
+                android:text="无音乐"
                 android:textSize="16sp" />
 
             <TextView
@@ -42,8 +44,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_music_name"
-                android:layout_marginTop="4dp"
-                android:text="123456789"
+                android:layout_marginTop="2dp"
+                android:lines="1"
+                android:singleLine="true"
+                android:text="未知"
                 android:textSize="10sp" />
 
         </RelativeLayout>
@@ -60,7 +64,7 @@
             android:layout_width="43dp"
             android:layout_height="43dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/bottom_btn_pause" />
+            android:src="@drawable/bottom_btn_play" />
 
         <ImageButton
             android:id="@+id/btn_next_music"
@@ -73,15 +77,12 @@
 
     <SeekBar
         android:id="@+id/play_progress"
-        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:layout_marginBottom="-2dp"
         android:layout_marginLeft="-17dp"
         android:layout_marginRight="-17dp"
         android:layout_marginTop="-3dp"
-        android:max="100"
-        android:progress="50"
         android:progressDrawable="@drawable/music_progress_bg"
         android:thumb="@null" />
 </LinearLayout>

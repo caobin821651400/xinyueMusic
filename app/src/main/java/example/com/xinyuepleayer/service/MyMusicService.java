@@ -135,6 +135,11 @@ public class MyMusicService extends Service {
         public String getImageUri() throws RemoteException {
             return service.getImageUri();
         }
+
+        @Override
+        public int getPosition() throws RemoteException {
+            return service.getPosition();
+        }
     };
 
     @Nullable
@@ -172,11 +177,16 @@ public class MyMusicService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         } else {
             Toast.makeText(this, "没有音乐", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     *
+     */
+    public int getPosition() {
+        return position;
     }
 
     /**
@@ -284,7 +294,11 @@ public class MyMusicService extends Service {
      * 判断是否正在播放
      */
     private boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        if (mediaPlayer != null) {
+            return mediaPlayer.isPlaying();
+        } else {
+            return false;
+        }
     }
 
     /**

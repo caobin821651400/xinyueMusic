@@ -2,12 +2,14 @@ package example.com.xinyuepleayer.fragment;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -19,25 +21,29 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import example.com.xinyuepleayer.R;
+import example.com.xinyuepleayer.activity.MainActivity;
 import example.com.xinyuepleayer.activity.MusicPlayerActivity;
 import example.com.xinyuepleayer.adapter.MusicListAdapter;
 import example.com.xinyuepleayer.base.BaseFragment;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.utils.MusicScanUtils;
+import example.com.xinyuepleayer.utils.MyLogUtil;
 
 /**
+ * 本地音乐列表适配器
  * Created by caobin on 2017/1/11.
  */
 public class MineFragment extends BaseFragment {
+
     private ListView mListView;
     private MusicListAdapter musicListAdapter;
     /**
      * 存放音乐信息的集合
      */
     private ArrayList<MusicInfoBean> musicInfoList;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,19 +64,19 @@ public class MineFragment extends BaseFragment {
         initView(view);
     }
 
-
     private void initView(View v) {
         mListView = (ListView) v.findViewById(R.id.list_view);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("position", position);
-                launchActivity(MusicPlayerActivity.class, bundle);
+                try {
+                    getPlayService().openAudio(position);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
-
 
     /**
      * 延迟加载
@@ -113,12 +119,10 @@ public class MineFragment extends BaseFragment {
                 musicListAdapter = new MusicListAdapter(getActivity());
                 mListView.setAdapter(musicListAdapter);
                 musicListAdapter.setList(musicInfoList);
-
                 //提示信息隐藏
             } else {
                 //没有, 提示信息显示
                 toast("本地没有歌曲!");
-
             }
             //取消加载进度条
         }
@@ -162,4 +166,5 @@ public class MineFragment extends BaseFragment {
             }
         }
     }
+
 }
