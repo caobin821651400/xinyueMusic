@@ -2,9 +2,11 @@ package example.com.xinyuepleayer.fragment;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +109,9 @@ public class MineFragment extends BaseFragment {
             @Override
             public void run() {
                 super.run();
+                if (musicInfoList != null) {
+                    musicInfoList = null;
+                }
                 musicInfoList = new ArrayList<MusicInfoBean>();
                 //这里扫描歌曲,耗时操作放到子线程中
                 MusicScanUtils.scanMusic(getActivity(), musicInfoList);
@@ -125,7 +131,7 @@ public class MineFragment extends BaseFragment {
             //判断是否有数据
             if (musicInfoList != null && musicInfoList.size() > 0) {
                 //有数据，设置适配器，将音乐信息传递到adapter显示在列表中
-                musicListAdapter = new MusicListAdapter(getActivity());
+                musicListAdapter = new MusicListAdapter(getActivity(), mListener);
                 mListView.setAdapter(musicListAdapter);
                 musicListAdapter.setList(musicInfoList);
                 //提示信息隐藏
@@ -176,4 +182,44 @@ public class MineFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 实现类，响应按钮点击事件
+     */
+    private MusicListAdapter.MyClickListener mListener = new MusicListAdapter.MyClickListener() {
+        @Override
+        public void myOnClick(int position) {
+            deleteMusic(position);
+        }
+    };
+
+    /**
+     * 删除指定位置的音乐
+     *
+     * @param position
+     */
+    public void deleteMusic(int position) {
+        //删除本地音乐
+        deleteLocalMusic(position);
+        //拿到本地歌曲的uri
+        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicInfoList.get(position).getId());
+        //删除
+        getActivity().getContentResolver().delete(uri, null, null);
+        //删除完成从新扫描，更新列表
+        getLocalMusic();
+        //如果删除正在播放的音乐，播放下一首，如果只有一首歌，就停止播放
+
+    }
+
+    /**
+     * 删除本地音乐
+     *
+     * @param position
+     */
+    private synchronized void deleteLocalMusic(int position) {
+        //删除本地音乐文件
+        File file = new File(musicInfoList.get(position).getUri());
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 }

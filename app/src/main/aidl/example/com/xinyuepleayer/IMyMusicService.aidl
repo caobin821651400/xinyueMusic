@@ -95,6 +95,10 @@ interface IMyMusicService {
         * 判断是否为暂停状态
        */
        boolean isPause();
+       /**
+        * 判断mediaPlayer是否为空
+        */
+        boolean mediaIsNull();
 
 
 

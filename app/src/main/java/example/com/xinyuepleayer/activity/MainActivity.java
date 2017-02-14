@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -44,12 +45,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView localTv, onLineTv, musicNameTv, musicArtistTv;
     private ViewPager mViewPager;
     private DrawerLayout mDrawerLayout;//侧滑菜单
-    private RelativeLayout playingLayout;//底部控制栏
     private ImageView bottomMusicImg;//底部显示歌曲专辑图片
     private SeekBar mSeekBar;//进度条
     private IMyMusicService service;//音乐播放的server
     //广播
     private MyReceiver myReceiver;
+
     //存放音乐信息的集合
     // private ArrayList<MusicInfoBean> musicInfoList;
 
@@ -76,7 +77,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         onLineTv = (TextView) findViewById(R.id.tv_on_line_music);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        playingLayout = (RelativeLayout) findViewById(R.id.rl_music_name_and_author);
         bottomMusicImg = (ImageView) findViewById(R.id.iv_music_image);
         mSeekBar = (SeekBar) findViewById(R.id.play_progress);
         musicNameTv = (TextView) findViewById(R.id.tv_music_name);
@@ -165,12 +165,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 toast("4");
                 break;
             case R.id.rl_music_name_and_author:
+                //这种情况就是第一次进入播放器，没有播放音乐，但是点击播放按钮，会空指针异常
+                try {
+                    if (service != null && service.mediaIsNull()) {
+                        return;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 launchActivity(MusicPlayerActivity.class, null);
-               // overridePendingTransition(R.anim.move_in_anim, R.anim.move_out_anim);
                 break;
             case R.id.btn_next_music:
                 //下一首
                 try {
+                    if (service != null && service.mediaIsNull()) {
+                        return;
+                    }
                     service.next();
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -180,6 +190,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //播放和暂停
                 if (service != null) {
                     try {
+                        //这种情况就是第一次进入播放器，没有播放音乐，但是点击播放按钮，会空指针异常
+                        if (service.mediaIsNull()) {
+                            return;
+                        }
                         if (service.isPlaying()) {
                             //此时正在播放,点击变暂停
                             service.pause();

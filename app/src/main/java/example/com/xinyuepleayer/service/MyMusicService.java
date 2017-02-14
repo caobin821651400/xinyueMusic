@@ -152,6 +152,11 @@ public class MyMusicService extends Service {
         public boolean isPause() throws RemoteException {
             return service.isPause();
         }
+
+        @Override
+        public boolean mediaIsNull() throws RemoteException {
+            return service.mediaIsNull();
+        }
     };
 
     @Nullable
@@ -210,6 +215,13 @@ public class MyMusicService extends Service {
     public void start() {
         mediaPlayer.start();
         isPause = false;
+    }
+
+    /**
+     * 判断mediaPlayer是否为空
+     */
+    public boolean mediaIsNull() {
+        return mediaPlayer == null ? true : false;
     }
 
     /**
