@@ -157,6 +157,16 @@ public class MyMusicService extends Service {
         public boolean mediaIsNull() throws RemoteException {
             return service.mediaIsNull();
         }
+
+        @Override
+        public int getMusicCount() throws RemoteException {
+            return service.getMusicCount();
+        }
+
+        @Override
+        public void refreshMusicList() throws RemoteException {
+            service.getMusicData();
+        }
     };
 
     @Nullable
@@ -337,6 +347,24 @@ public class MyMusicService extends Service {
      */
     public boolean isPause() {
         return isPause;
+    }
+
+    /**
+     * 得到本地歌曲数量
+     */
+    public int getMusicCount() {
+        if (musicInfoList == null) {
+            return 0;
+        } else {
+            return musicInfoList.size();
+        }
+    }
+
+    /**
+     * 服务刷新歌曲列表
+     */
+    public void refreshMusicList() {
+        getMusicData();
     }
 
     /**

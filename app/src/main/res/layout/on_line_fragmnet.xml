@@ -2,13 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
-    <TextView
+    <com.youth.banner.Banner xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image_banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="在线"
-        android:textSize="20sp" />
+        android:layout_height="130dp"
+        android:background="@drawable/img_banner_error"
+        app:image_scale_type="fit_xy"
+        app:indicator_drawable_selected="@drawable/banner_red"
+        app:indicator_drawable_unselected="@drawable/banner_grey"
+        app:indicator_height="9dp"
+        app:indicator_margin="3dp"
+        app:indicator_width="9dp"
+        app:is_auto_play="true">
 
+    </com.youth.banner.Banner>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
 </LinearLayout>

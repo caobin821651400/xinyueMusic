@@ -99,7 +99,13 @@ interface IMyMusicService {
         * 判断mediaPlayer是否为空
         */
         boolean mediaIsNull();
+     /**
+     * 得到本地歌曲数量
+     */
+      int getMusicCount();
 
-
-
+       /**
+       * 服务刷新歌曲列表
+       */
+      void refreshMusicList();
 }

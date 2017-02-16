@@ -1,6 +1,7 @@
 package example.com.xinyuepleayer.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import example.com.xinyuepleayer.R;
 public class BottomListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<String> mList;
+    private Context mContext;
 
     public BottomListAdapter(Context context) {
+        this.mContext = context;
         mInflater = LayoutInflater.from(context);
         mList = new ArrayList<>();
         mList.add("删除");
@@ -46,6 +49,9 @@ public class BottomListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mInflater.inflate(R.layout.item_list, parent, false);
         TextView textView = (TextView) view.findViewById(R.id.tv_info);
+        if (position == 1) {
+            textView.setTextColor(ContextCompat.getColor(mContext, R.color.red));
+        }
         textView.setText(mList.get(position));
         return view;
     }

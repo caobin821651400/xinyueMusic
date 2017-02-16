@@ -198,16 +198,27 @@ public class MineFragment extends BaseFragment {
      * @param position
      */
     public void deleteMusic(int position) {
+        //如果删除正在播放的音乐，播放下一首，如果只有一首歌，就停止播放
+        try {
+            if (musicInfoList.size() == 1) {
+                toast("就一首歌啦，再删就没得放了。就不让你删！");
+                return;
+            }
+            if (getPlayService().isPlaying()) {
+                getPlayService().next();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         //删除本地音乐
         deleteLocalMusic(position);
         //拿到本地歌曲的uri
-        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, musicInfoList.get(position).getId());
-        //删除
+        Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                musicInfoList.get(position).getId());
+        //删除(这里不知道为什么删除本地文件后，依然可以扫描到音乐信息，还需要用下面的删除ContentResolver中音乐信息)
         getActivity().getContentResolver().delete(uri, null, null);
         //删除完成从新扫描，更新列表
         getLocalMusic();
-        //如果删除正在播放的音乐，播放下一首，如果只有一首歌，就停止播放
-
     }
 
     /**
