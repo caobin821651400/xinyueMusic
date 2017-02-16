@@ -194,7 +194,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     try {
                         //这种情况就是第一次进入播放器，没有播放音乐，但是点击播放按钮，会空指针异常
                         if (service.mediaIsNull()) {
-                            return;
+                            toast("请选择歌曲列表中的一首歌");
                         }
                         if (service.isPlaying()) {
                             //此时正在播放,点击变暂停
