@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/wang_yi_title_bg</item>
         <item name="colorPrimaryDark">@color/wang_yi_title_bg</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowTranslucentStatus">true</item>
@@ -21,6 +21,11 @@
         <!-- 设置完全透明 -->
         <item name="android:backgroundDimEnabled">true</item>
         <!-- 设置屏幕变暗 -->
+    </style>
+
+    <style name="ColorTranslucentTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
 </resources>

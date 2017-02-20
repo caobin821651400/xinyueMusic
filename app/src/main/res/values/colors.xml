@@ -16,6 +16,7 @@
     <color name="pale_white">#e9ecf1</color><!--灰白-->
     <color name="pale_white1">#E2E2E2</color><!--灰白-->
     <color name="xiang_ya_black">#888786</color><!--象牙黑-->
+    <color name="black_gray">#1e000000</color><!--黑灰-->
 
     <color name="qq_music_title_bg">#31c27c</color>
     <color name="color_0176da">#0176da</color>

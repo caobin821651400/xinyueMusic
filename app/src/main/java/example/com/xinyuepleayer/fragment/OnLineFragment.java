@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import example.com.xinyuepleayer.R;
+import example.com.xinyuepleayer.activity.RankingActivity;
 import example.com.xinyuepleayer.base.BaseFragment;
 import example.com.xinyuepleayer.utils.GlideImageLoader;
 
@@ -21,7 +23,7 @@ import example.com.xinyuepleayer.utils.GlideImageLoader;
  * 网络歌曲界面
  * Created by caobin on 2017/1/11.
  */
-public class OnLineFragment extends BaseFragment {
+public class OnLineFragment extends BaseFragment implements View.OnClickListener {
 
     private Banner mBanner;
     //存放轮播图的集合
@@ -47,6 +49,12 @@ public class OnLineFragment extends BaseFragment {
 
     private void initView(View view) {
         mBanner = (Banner) view.findViewById(R.id.image_banner);
+        view.findViewById(R.id.iv_new_music).setOnClickListener(this);
+        view.findViewById(R.id.iv_net_music).setOnClickListener(this);
+        view.findViewById(R.id.iv_om_music).setOnClickListener(this);
+        view.findViewById(R.id.iv_movie_music).setOnClickListener(this);
+        view.findViewById(R.id.iv_hy_music).setOnClickListener(this);
+        view.findViewById(R.id.iv_old_music).setOnClickListener(this);
     }
 
     @Override
@@ -83,10 +91,56 @@ public class OnLineFragment extends BaseFragment {
         });
     }
 
+
+    @Override
+    public void onClick(View view) {
+        Bundle bundle = null;
+        switch (view.getId()) {
+            case R.id.iv_new_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 2);
+                bundle.putString("title", "新歌榜");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.iv_net_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 25);
+                bundle.putString("title", "网络歌曲");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.iv_om_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 21);
+                bundle.putString("title", "欧美金曲");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.iv_movie_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 14);
+                bundle.putString("title", "影视金曲");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.iv_hy_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 20);
+                bundle.putString("title", "华语金曲");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.iv_old_music:
+                bundle = new Bundle();
+                bundle.putInt("type", 22);
+                bundle.putString("title", "经典老歌");
+                launchActivity(RankingActivity.class, bundle);
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        mBanner.start();
+        mBanner.startAutoPlay();
     }
 
     @Override
@@ -96,8 +150,15 @@ public class OnLineFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mBanner.startAutoPlay();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mBanner = null;
     }
+
 }

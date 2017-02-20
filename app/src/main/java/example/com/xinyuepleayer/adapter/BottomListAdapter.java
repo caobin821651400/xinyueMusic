@@ -15,6 +15,7 @@ import java.util.List;
 import example.com.xinyuepleayer.R;
 
 /**
+ * 列表点击更多选项，这里暂时写死了，以后在加
  * Created by caobin on 2016/12/23.
  */
 public class BottomListAdapter extends BaseAdapter {
@@ -47,8 +48,8 @@ public class BottomListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = mInflater.inflate(R.layout.item_list, parent, false);
-        TextView textView = (TextView) view.findViewById(R.id.tv_info);
+        View view = mInflater.inflate(R.layout.item_bottom_more_list, parent, false);
+        TextView textView = (TextView) view.findViewById(R.id.tv_more_content);
         if (position == 1) {
             textView.setTextColor(ContextCompat.getColor(mContext, R.color.red));
         }

@@ -24,6 +24,7 @@ import example.com.xinyuepleayer.service.MyMusicService;
 import example.com.xinyuepleayer.utils.MyUtils;
 import example.com.xinyuepleayer.view.CircleImageView;
 import example.com.xinyuepleayer.view.CircleTransform;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 
 public class MusicPlayerActivity extends BaseActivity implements View.OnClickListener {
     //播放界面背景
@@ -45,7 +46,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_musci_plear);
+        setContentView(R.layout.activity_musci_player);
         initView();
         bindServiceAndStart();
         initData();
@@ -242,9 +243,10 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
                     .load(service.getImageUri())
                     .dontAnimate()
                     .error(R.drawable.no_music_rotate_img)
+                    .bitmapTransform(new BlurTransformation(this, 14, 3))// 设置高斯模糊
                     .into(allBg);
             //透明度
-            allBg.setAlpha(20);
+            allBg.setAlpha(80);
 
             mSeekBar.setMax(service.getDuration());
             mSeekBar.postDelayed(mRunnable, 10);
@@ -288,6 +290,12 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         unbindService(con);
         //停止线程
         mSeekBar.removeCallbacks(mRunnable);
@@ -296,6 +304,5 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
             unregisterReceiver(myReceiver);
             myReceiver = null;
         }
-       // overridePendingTransition(R.anim.move_in_anim, R.anim.move_out_anim);
     }
 }

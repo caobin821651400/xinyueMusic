@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -68,6 +69,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+        try {
+            if (service != null && service.isPlaying()) {
+                mSeekBar.post(mRunnable);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initView() {
@@ -195,6 +203,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         //这种情况就是第一次进入播放器，没有播放音乐，但是点击播放按钮，会空指针异常
                         if (service.mediaIsNull()) {
                             toast("请选择歌曲列表中的一首歌");
+                            return;
                         }
                         if (service.isPlaying()) {
                             //此时正在播放,点击变暂停

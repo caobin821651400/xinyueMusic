@@ -79,6 +79,7 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_new_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
@@ -102,10 +103,11 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_net_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
-                            android:src="@drawable/ic_intrent_music" />
+                            android:src="@drawable/ic_net_music" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -126,6 +128,7 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_om_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
@@ -157,10 +160,11 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_movie_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
-                            android:src="@drawable/ic_moive_music" />
+                            android:src="@drawable/ic_movie_music" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -180,6 +184,7 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_hy_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
@@ -204,6 +209,7 @@
                         android:orientation="vertical">
 
                         <ImageView
+                            android:id="@+id/iv_old_music"
                             android:layout_width="match_parent"
                             android:layout_height="80dp"
                             android:scaleType="fitXY"
