@@ -3,6 +3,7 @@ package example.com.xinyuepleayer.request;
 
 
 import example.com.xinyuepleayer.bean.RankMusicBean;
+import example.com.xinyuepleayer.bean.RankMusicUrlBean;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -14,4 +15,10 @@ public interface RankRequest {
     @GET("ting")
     Observable<RankMusicBean> getRankMusicList(@Query("format") String format, @Query("callback") String callback, @Query("from") String from,
                                                @Query("method") String method, @Query("type") int type, @Query("size") int size, @Query("offset") int offset);
+
+    @GET("ting")
+    Observable<RankMusicUrlBean> getRankMusicUrl(@Query("format") String format, @Query("callback") String callback, @Query("from") String from,
+                                                 @Query("method") String method, @Query("songid") String songid);
+
+
 }

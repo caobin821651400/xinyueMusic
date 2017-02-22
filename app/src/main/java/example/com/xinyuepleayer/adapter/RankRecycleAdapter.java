@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -26,14 +27,19 @@ import example.com.xinyuepleayer.utils.MyLogUtil;
  */
 public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.MyRecycleHolder> {
 
-    // private onRecyclerViewItemClickListener itemClickListener = null;
+    private onRecyclerViewItemClickListener itemClickListener = null;
     private Context mContext;
 
     private List<RankMusicBean.SongListBean> mList = new ArrayList<>();
 
-    public RankRecycleAdapter(Context context, List<RankMusicBean.SongListBean> rankList) {
+    public RankRecycleAdapter(Context context) {
         this.mContext = context;
+
+    }
+
+    public void setList(List<RankMusicBean.SongListBean> rankList) {
         this.mList = rankList;
+        notifyDataSetChanged();
     }
 
     /**
@@ -69,7 +75,7 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
      * @param position 在列表中位置
      */
     @Override
-    public void onBindViewHolder(MyRecycleHolder holder, int position) {
+    public void onBindViewHolder(MyRecycleHolder holder, final int position) {
         holder.tvName.setText(mList.get(position).getTitle());
         holder.tvAuthor.setText(mList.get(position).getAuthor());
         //加载图片
@@ -83,6 +89,12 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
             @Override
             public void onClick(View view) {
                 MyLogUtil.d("点击了");
+            }
+        });
+        holder.musicItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                 itemClickListener.onItemClick(mList.get(position).getSong_id());
             }
         });
     }
@@ -103,6 +115,7 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
     class MyRecycleHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvAuthor;
         ImageView musicImg, moreMenu;
+        RelativeLayout musicItem;
 
         public MyRecycleHolder(View itemView) {
             super(itemView);
@@ -110,18 +123,19 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
             tvAuthor = (TextView) itemView.findViewById(R.id.tv_music_author);
             musicImg = (ImageView) itemView.findViewById(R.id.iv_music_image);
             moreMenu = (ImageView) itemView.findViewById(R.id.iv_more_menu);
+            musicItem = (RelativeLayout) itemView.findViewById(R.id.rl_rank_list_item);
         }
     }
 
-//    public void setOnItemClickListener(onRecyclerViewItemClickListener listener) {
-//        this.itemClickListener = listener;
-//    }
-//
-//    /**
-//     * 定义一个接口用于点击回调
-//     */
-//    public interface onRecyclerViewItemClickListener {
-//
-//        void onItemClick(View v, String tag);
-//    }
+    public void setOnItemClickListener(onRecyclerViewItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
+
+    /**
+     * 定义一个接口用于点击回调
+     */
+    public interface onRecyclerViewItemClickListener {
+
+        void onItemClick(String songId);
+    }
 }

@@ -88,13 +88,7 @@ public class MineFragment extends BaseFragment {
                 }
             }
         });
-    }
 
-    /**
-     * 延迟加载
-     */
-    @Override
-    protected void lazyLoad() {
         //加载本地数据，显示到listView中
         getLocalMusic();
     }
@@ -204,7 +198,7 @@ public class MineFragment extends BaseFragment {
                 toast("就一首歌啦，再删就没得放了。就不让你删！");
                 return;
             }
-            if (getPlayService().isPlaying()) {
+            if (getPlayService().isPlaying() && getPlayService().getPosition() == position) {
                 getPlayService().next();
             }
         } catch (RemoteException e) {
@@ -219,6 +213,13 @@ public class MineFragment extends BaseFragment {
         getActivity().getContentResolver().delete(uri, null, null);
         //删除完成从新扫描，更新列表
         getLocalMusic();
+        //刷新服务的列表
+        try {
+            getPlayService().deleteMusic(position);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

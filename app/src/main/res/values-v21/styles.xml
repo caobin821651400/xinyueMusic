@@ -26,7 +26,7 @@
     <style name="xiao_mi" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@android:color/transparent</item>
-        <item name="colorAccent">@android:color/transparent</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
     </style>
 </resources>

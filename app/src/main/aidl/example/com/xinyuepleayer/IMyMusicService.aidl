@@ -12,6 +12,12 @@ interface IMyMusicService {
        * @param position 位置
        */
       int openAudio(int position);
+       /**
+        * 打开网络音乐
+        *
+        * @param url
+        */
+        void openNetMusic(String url);
 
       /**
        * 播放音乐
@@ -31,12 +37,12 @@ interface IMyMusicService {
       /**
        * 下一首
        */
-       void next();
+       int next();
 
       /**
        * 上一首
        */
-       void pre();
+       int pre();
 
       /**
        * 得到当前进度
@@ -107,5 +113,10 @@ interface IMyMusicService {
        /**
        * 服务刷新歌曲列表
        */
-      void refreshMusicList();
+      int refreshMusicList();
+          /**
+           * 删除歌曲
+           * @return
+           */
+          int deleteMusic(int position);
 }

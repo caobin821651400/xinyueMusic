@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -55,10 +54,7 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
         view.findViewById(R.id.iv_movie_music).setOnClickListener(this);
         view.findViewById(R.id.iv_hy_music).setOnClickListener(this);
         view.findViewById(R.id.iv_old_music).setOnClickListener(this);
-    }
 
-    @Override
-    protected void lazyLoad() {
         bannerList = new ArrayList<>();
         bannerList.add(R.drawable.img_banner_one);
         bannerList.add(R.drawable.img_banner_two);
@@ -71,6 +67,7 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
         //开始轮播
         mBanner.start();
     }
+
 
     /**
      * 设置图片加载器

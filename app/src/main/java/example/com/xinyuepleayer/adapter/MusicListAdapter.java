@@ -110,7 +110,7 @@ public class MusicListAdapter extends BaseAdapter {
                     case 0:
                         String musicName = mList.get(currentPosition).getTitle();
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle("删除该条目");
+                        builder.setTitle("温馨提示");
                         builder.setMessage("确认要删除歌曲《" + musicName + "》吗?");
                         builder.setPositiveButton("删除", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {

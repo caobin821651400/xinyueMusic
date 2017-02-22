@@ -15,6 +15,7 @@ import example.com.xinyuepleayer.IMyMusicService;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.utils.Constant;
 import example.com.xinyuepleayer.utils.MusicScanUtils;
+import example.com.xinyuepleayer.utils.MyLogUtil;
 import example.com.xinyuepleayer.utils.MyUtils;
 
 
@@ -46,7 +47,7 @@ public class MyMusicService extends Service {
     /**
      * 得到音乐列表
      */
-    private void getMusicData() {
+    private int getMusicData() {
         new Thread() {
 
             @Override
@@ -57,6 +58,7 @@ public class MyMusicService extends Service {
                 MusicScanUtils.scanMusic(getBaseContext(), musicInfoList);
             }
         }.start();
+        return currentPosition;
     }
 
     private IMyMusicService.Stub stub = new IMyMusicService.Stub() {
@@ -66,6 +68,11 @@ public class MyMusicService extends Service {
         public int openAudio(int position) throws RemoteException {
             service.openAudio(position);
             return position;
+        }
+
+        @Override
+        public void openNetMusic(String url) throws RemoteException {
+            service.openNetMusic(url);
         }
 
         @Override
@@ -84,13 +91,13 @@ public class MyMusicService extends Service {
         }
 
         @Override
-        public void next() throws RemoteException {
-            service.next();
+        public int next() throws RemoteException {
+            return service.next();
         }
 
         @Override
-        public void pre() throws RemoteException {
-            service.pre();
+        public int pre() throws RemoteException {
+            return service.pre();
         }
 
         @Override
@@ -164,8 +171,13 @@ public class MyMusicService extends Service {
         }
 
         @Override
-        public void refreshMusicList() throws RemoteException {
-            service.getMusicData();
+        public int refreshMusicList() throws RemoteException {
+            return service.getMusicData();
+        }
+
+        @Override
+        public int deleteMusic(int position) throws RemoteException {
+            return service.deleteMusic(position);
         }
     };
 
@@ -213,6 +225,38 @@ public class MyMusicService extends Service {
     }
 
     /**
+     * 打开网络音乐
+     *
+     * @param url
+     */
+    private void openNetMusic(String url) {
+        if (!url.isEmpty()) {
+            //如果不为空释放在new
+            if (mediaPlayer != null) {
+                // mediaPlayer.release();
+                mediaPlayer.reset();
+            }
+
+            try {
+                mediaPlayer = new MediaPlayer();
+                //准备完成监听
+                mediaPlayer.setOnPreparedListener(new MyOnPreparedListener());
+                //播放完监听
+                mediaPlayer.setOnCompletionListener(new MyOnCompletionListener());
+                //播放失败
+                mediaPlayer.setOnErrorListener(new MyOnErrorListener());
+                //拿到路径
+                mediaPlayer.setDataSource(url);
+                mediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "没有音乐", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      * 得到当前歌曲的位置
      */
     public int getPosition() {
@@ -252,18 +296,20 @@ public class MyMusicService extends Service {
     /**
      * 下一首
      */
-    public void next() {
+    public int next() {
         position++;
         //下一首
         if (musicInfoList != null) {
             openAudio(position % (musicInfoList.size()));
         }
+        currentPosition = position;
+        return currentPosition;
     }
 
     /**
      * 上一首
      */
-    public void pre() {
+    public int pre() {
         if (position == 0) {
             Toast.makeText(MyMusicService.this, "已经到头了!", Toast.LENGTH_SHORT).show();
         } else if (position > 0) {
@@ -272,6 +318,8 @@ public class MyMusicService extends Service {
         } else {
 
         }
+        currentPosition = position;
+        return currentPosition;
     }
 
     /**
@@ -365,6 +413,16 @@ public class MyMusicService extends Service {
      */
     public void refreshMusicList() {
         getMusicData();
+    }
+
+    /**
+     * 删除歌曲
+     *
+     * @return
+     */
+    public int deleteMusic(int position) {
+        musicInfoList.remove(position);
+        return currentPosition;
     }
 
     /**

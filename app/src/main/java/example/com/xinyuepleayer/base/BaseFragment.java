@@ -16,19 +16,15 @@ import example.com.xinyuepleayer.utils.MyLogUtil;
 /**
  * Created by caobin on 2016/12/6.
  */
-public abstract class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment {
 
 
     private IMyMusicService mMusicPlayService;
-    /**
-     * Fragment当前状态是否可见
-     */
-    protected boolean isVisible;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // MyLogUtil.d("onCreate");
+        // MyLogUtil.d("onCreate");
     }
 
     @Override
@@ -37,18 +33,6 @@ public abstract class BaseFragment extends Fragment {
         //MyLogUtil.d("onViewCreated");
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        //MyLogUtil.d("setUserVisibleHint");
-        if (getUserVisibleHint()) {
-            isVisible = true;
-            onVisible();
-        } else {
-            isVisible = false;
-            onInvisible();
-        }
-    }
 
     /**
      * 供子类调用 获取service
@@ -64,29 +48,6 @@ public abstract class BaseFragment extends Fragment {
         }
         return mMusicPlayService;
     }
-
-    /**
-     * 可见
-     */
-    protected void onVisible() {
-        lazyLoad();
-    }
-
-
-    /**
-     * 不可见
-     */
-    protected void onInvisible() {
-
-
-    }
-
-
-    /**
-     * 延迟加载
-     * 子类必须重写此方法
-     */
-    protected abstract void lazyLoad();
 
 
     /**

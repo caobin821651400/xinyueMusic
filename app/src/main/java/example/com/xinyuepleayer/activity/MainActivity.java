@@ -70,8 +70,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         try {
-            if (service != null && service.isPlaying()) {
-                mSeekBar.post(mRunnable);
+
+            if (service != null) {
+                if (service.isPlaying()) {
+                    mSeekBar.post(mRunnable);
+                    playerBtn.setImageResource(R.drawable.bottom_btn_pause);
+                } else {
+                    playerBtn.setImageResource(R.drawable.bottom_btn_play);
+                }
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -238,10 +244,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
-                searchBtn.setVisibility(View.INVISIBLE);
                 changeLocalText();
             } else if (position == 1) {
-                searchBtn.setVisibility(View.VISIBLE);
                 changeLineText();
             }
         }
