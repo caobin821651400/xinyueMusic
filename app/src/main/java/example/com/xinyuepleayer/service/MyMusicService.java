@@ -231,23 +231,12 @@ public class MyMusicService extends Service {
      */
     private void openNetMusic(String url) {
         if (!url.isEmpty()) {
-            //如果不为空释放在new
-            if (mediaPlayer != null) {
-                // mediaPlayer.release();
-                mediaPlayer.reset();
-            }
-
+//            if (mediaPlayer)
             try {
-                mediaPlayer = new MediaPlayer();
-                //准备完成监听
-                mediaPlayer.setOnPreparedListener(new MyOnPreparedListener());
-                //播放完监听
-                mediaPlayer.setOnCompletionListener(new MyOnCompletionListener());
-                //播放失败
-                mediaPlayer.setOnErrorListener(new MyOnErrorListener());
-                //拿到路径
+                mediaPlayer.reset();
                 mediaPlayer.setDataSource(url);
-                mediaPlayer.prepareAsync();
+                mediaPlayer.prepare();
+                mediaPlayer.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

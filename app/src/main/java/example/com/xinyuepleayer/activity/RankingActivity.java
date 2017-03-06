@@ -103,7 +103,7 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         final RankRequest rankRequest = retrofit.create(RankRequest.class);
-        //请求参数 "成都"
+        //请求参数
         rankRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 20, 0)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -165,6 +165,8 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
      */
     @Override
     public void onItemClick(final String songId) {
+
+
         //通过songId拿到音乐的url地址
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("温馨提示");
@@ -209,7 +211,9 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onNext(RankMusicUrlBean rankMusicBean) {
                         //请求完成下载歌曲
-                        downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
+                        //downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
+                        MyLogUtil.d(rankMusicBean.getBitrate().getShow_link());
+
                     }
                 });
     }
