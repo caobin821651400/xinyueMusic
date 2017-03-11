@@ -3,32 +3,39 @@ package example.com.xinyuepleayer.activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import example.com.xinyuepleayer.IMyMusicService;
 import example.com.xinyuepleayer.R;
 import example.com.xinyuepleayer.adapter.RankRecycleAdapter;
 import example.com.xinyuepleayer.base.BaseActivity;
+import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.bean.RankMusicBean;
 import example.com.xinyuepleayer.bean.RankMusicBean.SongListBean;
 import example.com.xinyuepleayer.bean.RankMusicUrlBean;
 import example.com.xinyuepleayer.request.RankRequest;
+import example.com.xinyuepleayer.service.MyMusicService;
 import example.com.xinyuepleayer.utils.Constant;
 import example.com.xinyuepleayer.utils.MyLogUtil;
 import retrofit2.Retrofit;
@@ -41,7 +48,8 @@ import rx.schedulers.Schedulers;
 /**
  * 排行榜列表
  */
-public class RankingActivity extends BaseActivity implements View.OnClickListener, RankRecycleAdapter.onRecyclerViewItemClickListener {
+public class RankingActivity extends BaseActivity implements View.OnClickListener,
+        RankRecycleAdapter.onRecyclerViewItemClickListener, RankRecycleAdapter.moreItemClickListener {
 
     private int musicType;//歌曲类型
     private String title;//标题
@@ -60,7 +68,8 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
             musicType = getIntent().getIntExtra("type", 2);
         }
         initView();
-        getData(musicType);
+        MyBindService();
+        getMusicListData(musicType);
     }
 
 
@@ -79,19 +88,17 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
         //分割线
         mRecyclerView.addItemDecoration(new DividerItemDecoration(RankingActivity.this, LinearLayoutManager.VERTICAL));
         //监听事件
-        mAdapter = new RankRecycleAdapter(RankingActivity.this);
+        mAdapter = new RankRecycleAdapter(RankingActivity.this, this);
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.setOnClickListener();
-
     }
 
     /**
-     * 获取网络数据
+     * 获取歌曲列表
      *
      * @param musicType
      */
-    private void getData(int musicType) {
+    private void getMusicListData(int musicType) {
         showDLG();
         //base URL
         String url = Constant.RANK_MUSIC_API_URL;
@@ -104,7 +111,7 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                 .build();
         final RankRequest rankRequest = retrofit.create(RankRequest.class);
         //请求参数
-        rankRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 20, 0)
+        rankRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 50, 0)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<RankMusicBean>() {
@@ -127,6 +134,50 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                     }
                 });
     }
+
+
+    /**
+     * 绑定服务
+     * 这里只绑定，并没有启动，在mainActivity中已经启动过了
+     */
+    private void MyBindService() {
+        Intent intent = new Intent(this, MyMusicService.class);
+        intent.setAction("com.caobin.musicplayer.aidlService");
+        bindService(intent, con, Context.BIND_AUTO_CREATE);
+    }
+
+    private IMyMusicService service;
+    /**
+     * 服务监听连接状态
+     */
+    private ServiceConnection con = new ServiceConnection() {
+        /**
+         * 链接成功回调
+         * @param componentName
+         * @param iBinder
+         */
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            service = IMyMusicService.Stub.asInterface(iBinder);
+        }
+
+        /**
+         * 链接失败回调
+         * @param componentName
+         */
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            if (service != null) {
+                try {
+                    //停止 释放
+                    service.stop();
+                    service = null;
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     /**
      * 设置顶部的背景
@@ -159,30 +210,42 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
     }
 
     /**
-     * recyclerView点击事件
+     * recyclerView点击事件,播放音乐
      *
      * @param songId
      */
     @Override
-    public void onItemClick(final String songId) {
+    public void onItemClick(String songId) {
+        getMusicUrl(songId, true);
+    }
 
 
+    /**
+     * "更多"点击回调
+     *
+     * @param songId
+     */
+    @Override
+    public void moreClickListener(final String songId) {
         //通过songId拿到音乐的url地址
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("温馨提示");
         builder.setMessage("确认要下载这首歌曲吗?");
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                getMusicUrl(songId);
+                getMusicUrl(songId, false);
             }
         });
         builder.setNegativeButton("取消", null);
         builder.create().show();
     }
 
-
-    private void getMusicUrl(String songId) {
-        MyLogUtil.d(songId);
+    /**
+     * 根据songId拿到歌曲的url地址
+     *
+     * @param songId
+     */
+    private void getMusicUrl(String songId, final boolean isCanPlaying) {
         String url = Constant.RANK_MUSIC_API_URL;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(url)
@@ -199,7 +262,6 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                 .subscribe(new Observer<RankMusicUrlBean>() {
                     @Override
                     public void onCompleted() {
-                        //disMissDLG();
                         //toast("请求完成");
                     }
 
@@ -210,14 +272,34 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
 
                     @Override
                     public void onNext(RankMusicUrlBean rankMusicBean) {
-                        //请求完成下载歌曲
-                        //downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
-                        MyLogUtil.d(rankMusicBean.getBitrate().getShow_link());
-
+                        if (isCanPlaying) {
+                            try {
+                                HashMap<Integer, MusicInfoBean> map = new HashMap<>();
+                                MusicInfoBean bean = new MusicInfoBean();
+                                bean.setUri(rankMusicBean.getBitrate().getShow_link());
+                                bean.setTitle(rankMusicBean.getSonginfo().getTitle());
+                                bean.setArtist(rankMusicBean.getSonginfo().getAuthor());
+                                bean.setCoverUri(rankMusicBean.getSonginfo().getPic_radio());
+                                map.put(0, bean);
+                                toast("正在播放" + rankMusicBean.getSonginfo().getTitle());
+                                service.openNetMusic(map);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            //请求完成下载歌曲
+                            downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
+                        }
                     }
                 });
     }
 
+    /**
+     * 下载音乐
+     *
+     * @param url
+     * @param name
+     */
     private void downLoadMusic(String url, String name) {
         toast("正在下载：" + name);
         DownloadManager downloadManager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -246,10 +328,11 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                long ID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-                if (ID == id) {
-                    toast(id + "下载完成");
-                }
+//                long ID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+//                if (ID == id) {
+//                    toast(id + "下载完成");
+//                }
+                toast("下载完成");
             }
         };
 
@@ -259,6 +342,9 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcastReceiver);
+        unbindService(con);
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+        }
     }
 }

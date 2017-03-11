@@ -10,12 +10,13 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import example.com.xinyuepleayer.IMyMusicService;
 import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.utils.Constant;
 import example.com.xinyuepleayer.utils.MusicScanUtils;
-import example.com.xinyuepleayer.utils.MyLogUtil;
 import example.com.xinyuepleayer.utils.MyUtils;
 
 
@@ -71,9 +72,10 @@ public class MyMusicService extends Service {
         }
 
         @Override
-        public void openNetMusic(String url) throws RemoteException {
-            service.openNetMusic(url);
+        public void openNetMusic(Map map) throws RemoteException {
+            service.openNetMusic((HashMap<Integer, MusicInfoBean>) map);
         }
+
 
         @Override
         public void start() throws RemoteException {
@@ -198,7 +200,6 @@ public class MyMusicService extends Service {
             musicInfo = musicInfoList.get(position);
             //如果不为空释放在new
             if (mediaPlayer != null) {
-//                mediaPlayer.release();
                 mediaPlayer.reset();
             }
 
@@ -226,22 +227,27 @@ public class MyMusicService extends Service {
 
     /**
      * 打开网络音乐
-     *
-     * @param url
      */
-    private void openNetMusic(String url) {
-        if (!url.isEmpty()) {
-//            if (mediaPlayer)
-            try {
-                mediaPlayer.reset();
-                mediaPlayer.setDataSource(url);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(this, "没有音乐", Toast.LENGTH_SHORT).show();
+    private void openNetMusic(HashMap<Integer, MusicInfoBean> map) {
+        this.musicInfo = map.get(0);
+        //如果不为空释放在new
+        if (mediaPlayer != null) {
+            mediaPlayer.reset();
+        }
+
+        try {
+            mediaPlayer = new MediaPlayer();
+            //准备完成监听
+            mediaPlayer.setOnPreparedListener(new MyOnPreparedListener());
+            //播放完监听
+            mediaPlayer.setOnCompletionListener(new MyOnCompletionListener());
+            //播放失败
+            mediaPlayer.setOnErrorListener(new MyOnErrorListener());
+            //拿到路径
+            mediaPlayer.setDataSource(musicInfo.getUri());
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

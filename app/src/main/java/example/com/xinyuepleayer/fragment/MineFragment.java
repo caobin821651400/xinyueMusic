@@ -24,6 +24,7 @@ import android.widget.ListView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import example.com.xinyuepleayer.R;
@@ -88,7 +89,6 @@ public class MineFragment extends BaseFragment {
                 }
             }
         });
-
         //加载本地数据，显示到listView中
         getLocalMusic();
     }
@@ -195,7 +195,7 @@ public class MineFragment extends BaseFragment {
         //如果删除正在播放的音乐，播放下一首，如果只有一首歌，就停止播放
         try {
             if (musicInfoList.size() == 1) {
-                toast("就一首歌啦，再删就没得放了。就不让你删！");
+                toast("就一首歌啦，再删就没得放了!");
                 return;
             }
             if (getPlayService().isPlaying() && getPlayService().getPosition() == position) {

@@ -48,7 +48,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_musci_player);
         initView();
-        bindServiceAndStart();
+        MyBindService();
         initData();
     }
 
@@ -56,7 +56,7 @@ public class MusicPlayerActivity extends BaseActivity implements View.OnClickLis
     /**
      * 绑定服务
      */
-    private void bindServiceAndStart() {
+    private void MyBindService() {
         Intent intent = new Intent(this, MyMusicService.class);
         intent.setAction("com.caobin.musicplayer.aidlService");
         bindService(intent, con, Context.BIND_AUTO_CREATE);

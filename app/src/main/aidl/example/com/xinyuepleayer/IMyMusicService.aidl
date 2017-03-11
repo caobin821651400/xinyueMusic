@@ -17,7 +17,7 @@ interface IMyMusicService {
         *
         * @param url
         */
-        void openNetMusic(String url);
+        void openNetMusic(in Map map);
 
       /**
        * 播放音乐

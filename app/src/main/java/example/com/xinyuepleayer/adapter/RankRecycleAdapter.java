@@ -1,7 +1,10 @@
 package example.com.xinyuepleayer.adapter;
 
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
@@ -28,12 +32,14 @@ import example.com.xinyuepleayer.utils.MyLogUtil;
 public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.MyRecycleHolder> {
 
     private onRecyclerViewItemClickListener itemClickListener = null;
+    private moreItemClickListener moreItemClickListener = null;
     private Context mContext;
 
     private List<RankMusicBean.SongListBean> mList = new ArrayList<>();
 
-    public RankRecycleAdapter(Context context) {
+    public RankRecycleAdapter(Context context, moreItemClickListener m) {
         this.mContext = context;
+        this.moreItemClickListener = m;
 
     }
 
@@ -88,13 +94,13 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
         holder.moreMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MyLogUtil.d("点击了");
+                moreItemClickListener.moreClickListener(mList.get(position).getSong_id());
             }
         });
         holder.musicItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 itemClickListener.onItemClick(mList.get(position).getSong_id());
+                itemClickListener.onItemClick(mList.get(position).getSong_id());
             }
         });
     }
@@ -132,10 +138,17 @@ public class RankRecycleAdapter extends RecyclerView.Adapter<RankRecycleAdapter.
     }
 
     /**
-     * 定义一个接口用于点击回调
+     * 定义一个接口用于列表点击回调
      */
     public interface onRecyclerViewItemClickListener {
 
         void onItemClick(String songId);
+    }
+
+    /**
+     * 点击更多时的回调接口
+     */
+    public interface moreItemClickListener {
+        void moreClickListener(String songId);
     }
 }
