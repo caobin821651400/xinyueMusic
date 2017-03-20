@@ -38,7 +38,7 @@
             android:id="@+id/tv_music_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:lines="1"
             android:singleLine="true"
             android:text="123456789"
@@ -54,11 +54,16 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="false"
-        android:paddingTop="10dp"
-        android:paddingRight="20dp"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
         android:src="@drawable/music_list_right_btn_bg" />
 
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/iv_music_image"
+        android:layout_marginLeft="60dp"
+        android:background="@color/gray1" />
 </RelativeLayout>

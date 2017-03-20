@@ -2,11 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/list_view"
+    <com.xiaosu.pulllayout.PullLayout
+        android:id="@+id/mPullLayout"
+        app:theme="@style/pull_style"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+    </com.xiaosu.pulllayout.PullLayout>
 
 </LinearLayout>

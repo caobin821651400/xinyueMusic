@@ -22,6 +22,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.xiaosu.pulllayout.PullLayout;
+import com.xiaosu.pulllayout.base.BasePullLayout;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +47,8 @@ public class MineFragment extends BaseFragment {
 
     private ListView mListView;
     private MusicListAdapter musicListAdapter;
+    //下拉刷新
+    private PullLayout mPullLayout;
     /**
      * 存放音乐信息的集合
      */
@@ -66,10 +71,21 @@ public class MineFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
+        //一进入到界面就刷新
+        mPullLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mPullLayout.autoRefreshOnCreate();
+            }
+        }, 1000);
+
     }
 
     private void initView(View v) {
         mListView = (ListView) v.findViewById(R.id.list_view);
+        mPullLayout = (PullLayout) v.findViewById(R.id.mPullLayout);
+        mPullLayout.setPullUpEnable(false);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -89,8 +105,28 @@ public class MineFragment extends BaseFragment {
                 }
             }
         });
-        //加载本地数据，显示到listView中
-        getLocalMusic();
+
+        mPullLayout.setOnPullListener(new BasePullLayout.OnPullCallBackListener() {
+            @Override
+            public void onRefresh() {
+                //加载本地数据，显示到listView中
+                getLocalMusic();
+                if (getPlayService() != null) {
+                    try {
+                        getPlayService().refreshMusicList();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onLoad() {
+                //上拉加载更多逻辑，
+                // 应为返回数据中没有将数据分割，直接显示全部，所以没办法用。
+                MyLogUtil.d("下拉完成");
+            }
+        });
     }
 
     /**
@@ -128,7 +164,8 @@ public class MineFragment extends BaseFragment {
                 musicListAdapter = new MusicListAdapter(getActivity(), mListener);
                 mListView.setAdapter(musicListAdapter);
                 musicListAdapter.setList(musicInfoList);
-                //提示信息隐藏
+                //当数据加载完成，取消刷新
+                mPullLayout.finishPull();
             } else {
                 //没有, 提示信息显示
                 toast("本地没有歌曲!");

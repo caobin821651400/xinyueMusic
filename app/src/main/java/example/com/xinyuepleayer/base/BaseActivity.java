@@ -75,7 +75,7 @@ public class BaseActivity extends AppCompatActivity {
         try {
             mProgressDialog = DialogFactory.creatCommonDialog(this,
                     getString(R.string.title_wait));
-            mProgressDialog.setCancelable(false);//点击其他地方不消失
+            //mProgressDialog.setCancelable(false);//点击其他地方不消失
             mProgressDialog.show();
         } catch (Exception e) {
         }

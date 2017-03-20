@@ -5,10 +5,14 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.listener.OnBannerClickListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +31,8 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
     private Banner mBanner;
     //存放轮播图的集合
     private List<Integer> bannerList;
+//    private ImageButton fmButton,rankButton;
+//    private TextView recomTv;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +60,10 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
         view.findViewById(R.id.iv_movie_music).setOnClickListener(this);
         view.findViewById(R.id.iv_hy_music).setOnClickListener(this);
         view.findViewById(R.id.iv_old_music).setOnClickListener(this);
+
+        view.findViewById(R.id.btn_fm).setOnClickListener(this);
+        view.findViewById(R.id.btn_rank).setOnClickListener(this);
+        view.findViewById(R.id.tv_recommend).setOnClickListener(this);
 
         bannerList = new ArrayList<>();
         bannerList.add(R.drawable.img_banner_one);
@@ -83,7 +93,7 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
         mBanner.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
             public void OnBannerClick(int position) {
-                toast("我是第" + position + "个");
+                toast("我是第" + position + "个轮播图");
             }
         });
     }
@@ -128,6 +138,18 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
                 bundle.putInt("type", 22);
                 bundle.putString("title", "经典老歌");
                 launchActivity(RankingActivity.class, bundle);
+                break;
+            case R.id.tv_recommend:
+                //每日推荐
+                toast("敬请期待");
+                break;
+            case R.id.btn_fm:
+                //fm广播
+                toast("敬请期待");
+                break;
+            case R.id.btn_rank:
+                //心悦排行
+                toast("敬请期待");
                 break;
             default:
                 break;

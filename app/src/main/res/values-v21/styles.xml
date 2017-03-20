@@ -29,4 +29,20 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
     </style>
+
+    <!--下拉刷新-->
+    <style name="pull_style">
+        <!--头部水滴颜色-->
+        <item name="waterDropColor">@color/wang_yi_title_bg</item>
+        <!--尾部指示箭头颜色-->
+        <item name="indicatorArrowColor">@color/wang_yi_title_bg</item>
+        <!--loading 小控件开始颜色-->
+        <item name="loadStartColor">#FFFFFFFF</item>
+        <!--loading 小控件结束颜色-->
+        <item name="loadEndColor">@color/wang_yi_title_bg</item>
+        <!--尾部文字颜色-->
+        <item name="android:textColor">@color/wang_yi_title_bg</item>
+        <!--头部箭头颜色-->
+        <item name="refreshArrowColor">@color/white</item>
+    </style>
 </resources>

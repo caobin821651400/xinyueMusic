@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.right_search:
-                toast("搜索");
+                launchActivity(SearchActivity.class, null);
                 break;
             case R.id.ll_menu_1:
                 mDrawerLayout.closeDrawers();
@@ -177,8 +177,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 toast("3");
                 break;
             case R.id.ll_menu_4:
-                mDrawerLayout.closeDrawers();
-                toast("4");
+                //退出
+                try {
+                    service.stop();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                finish();
                 break;
             case R.id.rl_music_name_and_author:
                 //这种情况就是第一次进入播放器，没有播放音乐，但是点击播放按钮，会空指针异常

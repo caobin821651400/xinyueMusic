@@ -9,13 +9,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -34,10 +32,9 @@ import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.bean.RankMusicBean;
 import example.com.xinyuepleayer.bean.RankMusicBean.SongListBean;
 import example.com.xinyuepleayer.bean.RankMusicUrlBean;
-import example.com.xinyuepleayer.request.RankRequest;
+import example.com.xinyuepleayer.request.MusicRequest;
 import example.com.xinyuepleayer.service.MyMusicService;
 import example.com.xinyuepleayer.utils.Constant;
-import example.com.xinyuepleayer.utils.MyLogUtil;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -86,7 +83,7 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(manager);
         //分割线
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(RankingActivity.this, LinearLayoutManager.VERTICAL));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(RankingActivity.this, LinearLayoutManager.VERTICAL));
         //监听事件
         mAdapter = new RankRecycleAdapter(RankingActivity.this, this);
         mAdapter.setOnItemClickListener(this);
@@ -109,9 +106,9 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                 //添加RxJava
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
-        final RankRequest rankRequest = retrofit.create(RankRequest.class);
+        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         //请求参数
-        rankRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 50, 0)
+        musicRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 50, 0)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<RankMusicBean>() {
@@ -254,9 +251,9 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
                 //添加RxJava
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
-        final RankRequest rankRequest = retrofit.create(RankRequest.class);
+        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
         //请求参数
-        rankRequest.getRankMusicUrl("json", "", "webapp_music", "baidu.ting.song.playAAC", songId)
+        musicRequest.getRankMusicUrl("json", "", "webapp_music", "baidu.ting.song.playAAC", songId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<RankMusicUrlBean>() {
