@@ -14,20 +14,17 @@ import example.com.xinyuepleayer.bean.MusicInfoBean;
  * Created by caobin on 2017/1/17.
  */
 public class MusicScanUtils {
-
     /**
      * 扫描本地歌曲
      */
     public static void scanMusic(Context context, List<MusicInfoBean> musicInfoBean) {
         //每次进来先清除list
         musicInfoBean.clear();
-
         /**
          *使用系统内部提供的音乐文件
          */
         Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-
         if (cursor == null) {
             return;
         }
@@ -37,7 +34,6 @@ public class MusicScanUtils {
             if (isMusic == 0) {
                 continue;
             }
-
             //获取歌曲在系统中的id
             long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
             //获取歌曲的歌名
@@ -62,7 +58,6 @@ public class MusicScanUtils {
             long fileSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
             //歌曲年份
             String year = cursor.getString((cursor.getColumnIndex(MediaStore.Audio.Media.YEAR)));
-
             MusicInfoBean bean = new MusicInfoBean();
             bean.setId(id);
             bean.setType(MusicInfoBean.Type.LOCAL);

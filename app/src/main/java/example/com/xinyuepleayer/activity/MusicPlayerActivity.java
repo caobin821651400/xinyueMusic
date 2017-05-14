@@ -26,6 +26,9 @@ import example.com.xinyuepleayer.view.CircleImageView;
 import example.com.xinyuepleayer.view.CircleTransform;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
+/**
+ * 带旋转的播放界面
+ */
 public class MusicPlayerActivity extends BaseActivity implements View.OnClickListener {
     //播放界面背景
     private ImageView allBg;

@@ -20,6 +20,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,15 +38,9 @@ import example.com.xinyuepleayer.bean.MusicInfoBean;
 import example.com.xinyuepleayer.bean.RankMusicBean;
 import example.com.xinyuepleayer.bean.RankMusicBean.SongListBean;
 import example.com.xinyuepleayer.bean.RankMusicUrlBean;
-import example.com.xinyuepleayer.request.MusicRequest;
 import example.com.xinyuepleayer.service.MyMusicService;
 import example.com.xinyuepleayer.utils.Constant;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import example.com.xinyuepleayer.utils.MyLogUtil;
 
 /**
  * 排行榜列表
@@ -96,40 +96,36 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
      * @param musicType
      */
     private void getMusicListData(int musicType) {
-        showDLG();
         //base URL
         String url = Constant.RANK_MUSIC_API_URL;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                //json解析
-                .addConverterFactory(GsonConverterFactory.create())
-                //添加RxJava
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        //请求参数
-        musicRequest.getRankMusicList("json", "", "webapp_music", "baidu.ting.billboard.billList", musicType, 50, 0)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<RankMusicBean>() {
-                    @Override
-                    public void onCompleted() {
-                        disMissDLG();
-                        //toast("请求完成");
-                    }
+        final RequestParams params = new RequestParams(url);
+        params.addBodyParameter("type", musicType + "");//歌曲类型
+        params.addBodyParameter("size", "50");//一页请求多少条数据
+        params.addBodyParameter("offset", "0");//从第几页开始请求
+        showDLG();
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                //请求成功之后
+                rankList = new ArrayList<SongListBean>();
+                rankList.addAll(new Gson().fromJson(result, RankMusicBean.class).getSong_list());
+                mAdapter.setList(rankList);
+            }
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                //如果请求失败，打印失败日志
+                MyLogUtil.d("错误 ：" + ex.getMessage());
+            }
+            @Override
+            public void onCancelled(CancelledException cex) {
 
-                    @Override
-                    public void onError(Throwable e) {
-                        System.err.println("错误信息：" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(RankMusicBean rankMusicBean) {
-                        rankList = new ArrayList<SongListBean>();
-                        rankList.addAll(rankMusicBean.getSong_list());
-                        mAdapter.setList(rankList);
-                    }
-                });
+            }
+            @Override
+            public void onFinished() {
+                //关闭进度框
+                disMissDLG();
+            }
+        });
     }
 
 
@@ -137,6 +133,7 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
      * 绑定服务
      * 这里只绑定，并没有启动，在mainActivity中已经启动过了
      */
+
     private void MyBindService() {
         Intent intent = new Intent(this, MyMusicService.class);
         intent.setAction("com.caobin.musicplayer.aidlService");
@@ -243,59 +240,60 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
      * @param songId
      */
     private void getMusicUrl(String songId, final boolean isCanPlaying) {
-        String url = Constant.RANK_MUSIC_API_URL;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                //json解析
-                .addConverterFactory(GsonConverterFactory.create())
-                //添加RxJava
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        //请求参数
-        musicRequest.getRankMusicUrl("json", "", "webapp_music", "baidu.ting.song.playAAC", songId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<RankMusicUrlBean>() {
-                    @Override
-                    public void onCompleted() {
-                        //toast("请求完成");
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        System.err.println("错误信息：" + e.getMessage());
-                    }
+        String url = Constant.RANK_MUSIC_API_URL_SONGID;
+        final RequestParams params = new RequestParams(url);
+        //参数，songId
+        params.addBodyParameter("songid", songId);
+        showDLG();
+        x.http().get(params, new Callback.CommonCallback<String>() {
 
-                    @Override
-                    public void onNext(RankMusicUrlBean rankMusicBean) {
-                        if (isCanPlaying) {
-                            try {
-                                HashMap<Integer, MusicInfoBean> map = new HashMap<>();
-                                MusicInfoBean bean = new MusicInfoBean();
-                                bean.setUri(rankMusicBean.getBitrate().getShow_link());
-                                bean.setTitle(rankMusicBean.getSonginfo().getTitle());
-                                bean.setArtist(rankMusicBean.getSonginfo().getAuthor());
-                                bean.setCoverUri(rankMusicBean.getSonginfo().getPic_radio());
-                                map.put(0, bean);
-                                toast("正在播放" + rankMusicBean.getSonginfo().getTitle());
-                                service.openNetMusic(map);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            //请求完成下载歌曲
-                            downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
-                        }
+            @Override
+            public void onSuccess(String result) {
+                MyLogUtil.d("结果 ：" + result);
+                RankMusicUrlBean rankMusicBean = new Gson().fromJson(result, RankMusicUrlBean.class);
+                if (isCanPlaying) {
+                    try {
+                        HashMap<Integer, MusicInfoBean> map = new HashMap<>();
+                        MusicInfoBean bean = new MusicInfoBean();
+                        bean.setUri(rankMusicBean.getBitrate().getShow_link());
+                        bean.setTitle(rankMusicBean.getSonginfo().getTitle());
+                        bean.setArtist(rankMusicBean.getSonginfo().getAuthor());
+                        bean.setCoverUri(rankMusicBean.getSonginfo().getPic_radio());
+                        map.put(0, bean);
+                        toast("正在播放" + rankMusicBean.getSonginfo().getTitle());
+                        service.openNetMusic(map);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
-                });
+                } else {
+                    //请求完成下载歌曲
+                    downLoadMusic(rankMusicBean.getBitrate().getShow_link(), rankMusicBean.getSonginfo().getTitle());
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MyLogUtil.d("错误 ：" + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                disMissDLG();
+            }
+        });
     }
 
     /**
      * 下载音乐
      *
-     * @param url
-     * @param name
+     * @param url 音乐的url地址
+     * @param name 音乐名称
      */
     private void downLoadMusic(String url, String name) {
         toast("正在下载：" + name);
@@ -303,7 +301,7 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         //设置状态栏中显示Notification,下载完成不消失
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        //设置可用的网络类型
+        //设置可用的网络类型，wifi下可以进行下载
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         //不显示下载界面
         request.setVisibleInDownloadsUi(false);
@@ -311,28 +309,21 @@ public class RankingActivity extends BaseActivity implements View.OnClickListene
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_MUSIC, name);
         //将请求加入请求队列 downLoadManager会自动调用对应的服务执行者个请求
         long id = downloadManager.enqueue(request);
-        downLoadComplete(id);
+        downLoadComplete();
     }
 
     /**
      * 是否下载完成
-     *
-     * @param id
      */
-    private void downLoadComplete(final long id) {
+    private void downLoadComplete() {
         // 注册广播监听系统的下载完成事件。
         IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-//                long ID = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-//                if (ID == id) {
-//                    toast(id + "下载完成");
-//                }
                 toast("下载完成");
             }
         };
-
         registerReceiver(broadcastReceiver, intentFilter);
     }
 

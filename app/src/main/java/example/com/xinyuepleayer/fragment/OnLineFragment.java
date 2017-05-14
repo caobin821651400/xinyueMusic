@@ -17,6 +17,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
+import example.com.xinyuepleayer.MyWebActivity;
 import example.com.xinyuepleayer.R;
 import example.com.xinyuepleayer.activity.RankingActivity;
 import example.com.xinyuepleayer.base.BaseFragment;
@@ -93,7 +94,7 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
         mBanner.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
             public void OnBannerClick(int position) {
-                toast("我是第" + position + "个轮播图");
+                launchActivity(MyWebActivity.class, null);
             }
         });
     }
@@ -141,15 +142,24 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
                 break;
             case R.id.tv_recommend:
                 //每日推荐
-                toast("敬请期待");
+                bundle = new Bundle();
+                bundle.putInt("type", 22);
+                bundle.putString("title", "经典老歌");
+                launchActivity(RankingActivity.class, bundle);
                 break;
             case R.id.btn_fm:
                 //fm广播
-                toast("敬请期待");
+                bundle = new Bundle();
+                bundle.putInt("type", 22);
+                bundle.putString("title", "经典老歌");
+                launchActivity(RankingActivity.class, bundle);
                 break;
             case R.id.btn_rank:
                 //心悦排行
-                toast("敬请期待");
+                bundle = new Bundle();
+                bundle.putInt("type", 22);
+                bundle.putString("title", "经典老歌");
+                launchActivity(RankingActivity.class, bundle);
                 break;
             default:
                 break;

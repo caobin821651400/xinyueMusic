@@ -14,6 +14,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 
+import com.google.gson.Gson;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +34,7 @@ import example.com.xinyuepleayer.bean.SearchBean;
 import example.com.xinyuepleayer.request.MusicRequest;
 import example.com.xinyuepleayer.service.MyMusicService;
 import example.com.xinyuepleayer.utils.Constant;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import example.com.xinyuepleayer.utils.MyLogUtil;
 
 /**
  * 搜索歌曲界面
@@ -90,39 +91,39 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      * 搜索网络歌曲
      */
     private void searchMusic() {
-        String url = Constant.RANK_MUSIC_API_URL;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                //json解析
-                .addConverterFactory(GsonConverterFactory.create())
-                //添加RxJava
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        //请求参数
-        musicRequest.searchMusic(searchEd.getText().toString().trim())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SearchBean>() {
-                    @Override
-                    public void onCompleted() {
-                        //toast("请求完成");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        System.err.println("错误信息：" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(SearchBean searchBean) {
-                        List<SearchBean.SongBean> list = new ArrayList<>();
-                        list.addAll(searchBean.getSong());
-                        mAdapter.setList(list);
-                        closeInput();
-                    }
-                });
+        //请求音乐的url地址
+        String url = Constant.SEARCG_MUSIC_API;
+        final RequestParams params = new RequestParams(url);
+        //添加请求参数,用户输入的音乐名称
+        params.addBodyParameter("query", searchEd.getText().toString().trim());
+        showDLG();
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                //请求成功
+                MyLogUtil.d("结果 ：" + result);
+                SearchBean searchBean = new Gson().fromJson(result, SearchBean.class);
+                List<SearchBean.SongBean> list = new ArrayList<>();
+                list.addAll(searchBean.getSong());
+                mAdapter.setList(list);
+                closeInput();
+            }
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                //请求发生参数
+                MyLogUtil.d("错误 ：" + ex.getMessage());
+            }
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+                //请求完成
+                disMissDLG();
+            }
+        });
     }
+
 
     /**
      * 根据songId拿到歌曲的url地址
@@ -130,47 +131,47 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      * @param songId
      */
     private void getMusicUrl(String songId) {
-        String url = Constant.RANK_MUSIC_API_URL;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                //json解析
-                .addConverterFactory(GsonConverterFactory.create())
-                //添加RxJava
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        final MusicRequest musicRequest = retrofit.create(MusicRequest.class);
-        //请求参数
-        musicRequest.getRankMusicUrl("json", "", "webapp_music", "baidu.ting.song.playAAC", songId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<RankMusicUrlBean>() {
-                    @Override
-                    public void onCompleted() {
-                        //toast("请求完成");
-                    }
+        String url = Constant.RANK_MUSIC_API_URL_SONGID;
 
-                    @Override
-                    public void onError(Throwable e) {
-                        System.err.println("错误信息：" + e.getMessage());
-                    }
+        final RequestParams params = new RequestParams(url);
+        params.addBodyParameter("songid", songId);
+        showDLG();
+        x.http().get(params, new Callback.CommonCallback<String>() {
 
-                    @Override
-                    public void onNext(RankMusicUrlBean rankMusicBean) {
-                        try {
-                            HashMap<Integer, MusicInfoBean> map = new HashMap<>();
-                            MusicInfoBean bean = new MusicInfoBean();
-                            bean.setUri(rankMusicBean.getBitrate().getShow_link());
-                            bean.setTitle(rankMusicBean.getSonginfo().getTitle());
-                            bean.setArtist(rankMusicBean.getSonginfo().getAuthor());
-                            bean.setCoverUri(rankMusicBean.getSonginfo().getPic_radio());
-                            map.put(0, bean);
-                            toast("正在播放" + rankMusicBean.getSonginfo().getTitle());
-                            service.openNetMusic(map);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+            @Override
+            public void onSuccess(String result) {
+                MyLogUtil.d("结果 ：" + result);
+                RankMusicUrlBean rankMusicBean = new Gson().fromJson(result, RankMusicUrlBean.class);
+                try {
+                    HashMap<Integer, MusicInfoBean> map = new HashMap<>();
+                    MusicInfoBean bean = new MusicInfoBean();
+                    bean.setUri(rankMusicBean.getBitrate().getShow_link());
+                    bean.setTitle(rankMusicBean.getSonginfo().getTitle());
+                    bean.setArtist(rankMusicBean.getSonginfo().getAuthor());
+                    bean.setCoverUri(rankMusicBean.getSonginfo().getPic_radio());
+                    map.put(0, bean);
+                    toast("正在播放" + rankMusicBean.getSonginfo().getTitle());
+                    service.openNetMusic(map);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                MyLogUtil.d("错误 ：" + ex.getMessage());
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                disMissDLG();
+            }
+        });
     }
 
     /**
@@ -215,6 +216,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             }
         }
     };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

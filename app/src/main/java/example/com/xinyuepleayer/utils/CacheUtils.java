@@ -2,6 +2,11 @@ package example.com.xinyuepleayer.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+
+import com.google.gson.Gson;
+
+import example.com.xinyuepleayer.bean.UserBean;
 
 /**
  * 缓存数据
@@ -16,7 +21,7 @@ public class CacheUtils {
      * @param key
      * @return
      */
-    public static Boolean getBoolean(Context context, String key) {
+    public static Boolean getIsLogin(Context context, String key) {
         SharedPreferences sp = context.getSharedPreferences("caobin_news", Context.MODE_PRIVATE);
         return sp.getBoolean(key, false);
     }
@@ -28,7 +33,7 @@ public class CacheUtils {
      * @param key
      * @param value
      */
-    public static void putBoolean(Context context, String key, boolean value) {
+    public static void saveIsLogin(Context context, String key, boolean value) {
         SharedPreferences sp = context.getSharedPreferences("caobin_news", Context.MODE_PRIVATE);
         sp.edit().putBoolean(key, value).commit();
     }
@@ -56,4 +61,32 @@ public class CacheUtils {
         SharedPreferences sp = context.getSharedPreferences("caobin_news", Context.MODE_PRIVATE);
         return sp.getString(key, "");
     }
+
+//
+//    /**
+//     * 缓存文本数据
+//     *
+//     * @param context
+//     * @param key
+//     */
+//    public static void saveUserInfo(Context context, String key, String value) {
+//        SharedPreferences sp = context.getSharedPreferences("caobin_news", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString(key, value);
+//        editor.commit();
+//    }
+//
+//    /**
+//     * 获取缓存数据
+//     *
+//     * @param context
+//     * @param key
+//     * @return
+//     */
+//    public static String getUserInfo(Context context, String key) {
+//        SharedPreferences sp = context.getSharedPreferences("caobin_news", Context.MODE_PRIVATE);
+//        return sp.getString(key, "");
+//    }
+
+
 }

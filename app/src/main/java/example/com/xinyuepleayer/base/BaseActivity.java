@@ -1,5 +1,6 @@
 package example.com.xinyuepleayer.base;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -109,6 +110,16 @@ public class BaseActivity extends AppCompatActivity {
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus()
                     .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+    /**
+     * 弹出AlertDialog
+     *
+     * @param msg
+     */
+    protected void showAlert(String msg) {
+        new AlertDialog.Builder(this).setIcon(R.mipmap.ic_launcher)
+                .setTitle("温馨提示").setMessage(msg)
+                .setPositiveButton("确定", null).create().show();
     }
 
     @Override

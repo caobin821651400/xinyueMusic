@@ -30,4 +30,47 @@
     <color name="color_512da8">#512da8</color>
     <color name="wang_yi_title_bg">#ffce3d3a</color>
     <color name="title_color_normal">#E28B89</color>
+
+    <!-- 主色 -->
+    <color name="main_red">#e30c0c</color>
+    <!-- 辅色 -->
+    <color name="main_orange">#ff5900</color>
+    <!-- 中性色 -->
+    <color name="main_medium_A">#ff4c4c4c</color> <!-- 标题正文 -->
+    <color name="main_medium_B">#ff969696</color> <!-- 灰色文字 -->
+    <color name="main_medium_C">#ffd0d0d0</color> <!-- 分割线 -->
+    <color name="main_medium_D">#fff4f4f4</color><!-- 背景 -->
+    <color name="main_medium_E">#fffafafa</color>
+
+    <color name="province_line_border">#C7C7C7</color>
+
+    <color name="top_bg_color">#FFFFFF</color>
+    <color name="pop_bg_color">#ffffffff</color>
+    <color name="focus_menu_color">#50000000</color>
+
+    <drawable name="top_title_bg_color1">#ff4272e2</drawable>
+
+    <color name="color_doc_content_sw_border">#00BAF1</color>
+    <color name="color_doc_content_fw_border">#ffff9393</color>
+    <color name="color_doc_content_value">#ff4c4c4c</color>
+
+    <color name="info_value">#949494</color>
+    <color name="info_blue">#67C3FE</color>
+
+
+    <color name="item_progress">#12A3F7</color>
+    <color name="pale_txt">#e9ecf1</color><!--灰白-->
+    <color name="pale_black_txt">#4c4c4c</color><!--灰黑-->
+    <color name="blackish_green">#239A18</color><!--墨绿-->
+    <color name="division_line_color">#E0E0E0</color><!--分割线-->
+    <color name="gray_layout_bg">#F1F1F1</color><!--灰色背景-->
+    <color name="money_text_color">#FF7408</color><!--钱的颜色-->
+    <color name="top_title_text_color">#00BAF1</color><!--顶部标题字体颜色-->
+    <color name="order_flow_select_color">#29A1F7</color><!--订单详情流程选中字体-->
+
+    <color name="choice_window_title_text_color">#747474</color>
+    <color name="choice_window_content_text_color">#D8D8D8</color>
+    <color name="introduce_title">#303030</color>
+    <color name="introduce_content">#6D6D6D</color>
+    <color name="data_sta_title">#F2F2F2</color><!--数据统计title-->
 </resources>

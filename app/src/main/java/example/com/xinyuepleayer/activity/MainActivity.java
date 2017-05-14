@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import example.com.xinyuepleayer.IMyMusicService;
@@ -70,7 +71,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         try {
-
             if (service != null) {
                 if (service.isPlaying()) {
                     mSeekBar.post(mRunnable);
@@ -165,12 +165,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 launchActivity(SearchActivity.class, null);
                 break;
             case R.id.ll_menu_1:
-                mDrawerLayout.closeDrawers();
-                toast("1");
+                launchActivity(LoginActivity.class, null);
                 break;
             case R.id.ll_menu_2:
-                mDrawerLayout.closeDrawers();
-                toast("2");
+                launchActivity(UserInfoActivity.class, null);
                 break;
             case R.id.ll_menu_3:
                 mDrawerLayout.closeDrawers();
@@ -310,9 +308,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //两种情况 1.第一次进入程序没有播放  2.暂停退出  3.正在播放时推出。只有第一种情况service为空
                 if (service.isPlaying() || service.isPause()) {
                     //目的为了在退出程序时，service不为空，在次进来时显示正在播放的歌曲信息
-                    showMusicInfo(service);
+                    try {
+                        musicNameTv.setText(service.getName());
+                        musicArtistTv.setText(service.getArtist());
+                        Glide.with(MainActivity.this).load(service.getImageUri()).centerCrop()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .error(R.drawable.no_music_rotate_img)
+                                .crossFade()
+                                .into(bottomMusicImg);
+                        mSeekBar.setMax(service.getDuration());
+                        mSeekBar.postDelayed(mRunnable, 10);
+                        //判断是否正在播放，显示暂停或者播放的图片
+                        if (service.isPlaying()) {
+                            playerBtn.setImageResource(R.drawable.bottom_btn_pause);
+                        } else {
+                            playerBtn.setImageResource(R.drawable.bottom_btn_play);
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 } else {
-
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();

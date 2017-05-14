@@ -1,10 +1,7 @@
 package example.com.xinyuepleayer.adapter;
 
 
-import android.app.DownloadManager;
 import android.content.Context;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
@@ -23,7 +19,6 @@ import java.util.List;
 
 import example.com.xinyuepleayer.R;
 import example.com.xinyuepleayer.bean.RankMusicBean;
-import example.com.xinyuepleayer.utils.MyLogUtil;
 
 /**
  * 排行榜适配器

@@ -78,8 +78,5 @@ public class CircularImageView extends ImageView {
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
-
-
     }
-
 }
